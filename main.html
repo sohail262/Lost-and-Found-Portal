@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lost and Found Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles1.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+  
+
+  <style>
+    .found {
+      background-color: #70fc70;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-auth.js"></script>
+  <script src="https://smtpjs.com/v3/smtp.js"></script>
+</head>
+
+<body>
+<header>
+  <div class="logo">
+    <img src="media/Hyderabad Campus_page-0001.jpg" alt="NMIMS Hyderabad logo">
+  </div>
+  <div class="search_area">
+    <div class="search-symbol">
+      <input type="text" placeholder="Search.." id="searchInput">
+      <i class="fa-solid fa-search"></i>
+    </div>
+  </div>
+  <div class="user-info">
+    <img width="20" height="20" src="https://img.icons8.com/pulsar-line/48/user.png" alt="user" />
+    <span id="user-name"></span>
+  </div>
+  <button id="logout-btn" class="secondary-btn">Logout</button>
+</header>
+
+
+<div class="heading">
+  <h1>Lost and Found Portal</h1>
+</div>
+
+
+
+
+  <div class="content">
+    <h2>About Lost and Found Portal</h2>
+    <video src="media/iLost_the_search_engine_for_lost__found.mp4" height="400px" width="auto" autoplay style="float: right; padding: 50px;"></video>
+    <p>The Lost and Found Portal is a comprehensive digital platform designed to streamline the process of reporting and locating lost or found items within our campus community. Our mission is to create a secure and efficient system that bridges the gap between those who have misplaced their belongings and those who have discovered unclaimed items.</p>
+
+    <h3>Our Objectives</h3>
+    <ul>
+      <li>Provide a user-friendly interface for students, staff, and faculty to report lost or found items.</li>
+      <li>Establish a centralized database to store and manage information about lost and found items.</li>
+      <li>Facilitate communication between the involved parties to expedite the return of lost items.</li>
+      <li>Promote a culture of responsibility and accountability within our campus community.</li>
+    </ul>
+  
+    <h3>How It Works</h3>
+  
+    <p>The Lost and Found Portal offers two distinct sections: "Report Lost" and "Report Found." If you have misplaced an item, simply access the "Report Lost" section and provide details about the item, including its description, location last seen, and any additional information that may aid in its identification. Conversely, if you have come across an unclaimed item, you can use the "Report Found" section to submit details about the item's location and condition.</p>
+  
+    <p>Once an item is reported, our dedicated team of security personnel will diligently work to match lost items with their rightful owners. Additionally, the portal's "History" section allows users to view previously reported items, fostering transparency and accountability throughout the process.</p>
+  
+    <h3>Get Involved</h3>
+    <p>We encourage all members of our campus community to actively participate in the Lost and Found Portal. By working together, we can create a safer and more organized environment, ensuring that lost items find their way back to their rightful owners promptly. Join us in this collective effort to promote responsibility and safeguard the belongings of our fellow community members.</p>
+  </div>
+
+<section id="lost-item-section">
+  
+  
+  <h2>Lost Items</h2>
+  <div class="lost-items" id="lost-items">
+    <!-- Lost items will be dynamically added here -->
+  </div>
+  <div class="button-container">
+    <button id="lost-btn" class="primary-btn">Report Lost</button>
+  </div>
+</section>
+
+<!-- <section id="found-item-section" style="display: none;">
+  <h2>Items Found by Security/Student</h2>
+  <div class="found-items" id="found-items">
+    Found items will be dynamically added here
+ </div>
+  <div class="button-container" style="display: none;">
+    <button id="found-btn" class="primary-btn">Report Found</button>
+  </div>
+</section> --> 
+
+<section id="history">
+  <h2>History</h2>
+  <div class="history-items" id="history-items">
+    <!-- History items will be dynamically added here -->
+  </div>
+</section>
+
+<!-- Lost Item Modal -->
+<div id="lost-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>Lost Item Form</h3>
+    <form id="lost-form">
+      Lost Item:<input name="name" placeholder="Enter the Lost Item" required>
+      Last Location:<input name="location" placeholder="Location" required>
+      Date:<input name="date" type="date" >
+      Your Contact: <input name="contact" placeholder="Contact" >
+      Email ID: <input type="email" name="email" placeholder="Enter your Email Address">
+      Additional Information<textarea name="info" placeholder="Additional Information about item lost"></textarea>
+      Image:<input type="file" name="photo" id="lost-photo-input" accept="image/*">
+      <button type="submit" class="primary-btn">Submit</button>
+    </form>
+  </div>
+</div>
+
+<!-- Found Item Modal -->
+<div id="found-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>Found Item Form</h3>
+    <form id="found-form">
+      Name:<input name="name" placeholder="Found Item Name" required>
+      Location:<input name="location" placeholder="Found at Location" required>
+      Date:<input name="date" type="date" >
+      Contact<input name="contact" placeholder="Your Contact" required>
+      Information<textarea name="info" placeholder="Additional Information"></textarea>
+      Image<input type="file" name="photo" id="found-photo-input" accept="image/*" required>
+      <button type="submit" class="primary-btn">Submit</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  
+  // Initialize Firebase
+  const firebaseConfig = {
+    databaseURL: "https://lostandfound-e3d1d-default-rtdb.firebaseio.com/",
+    apiKey: "AIzaSyDxDcnRl1NsWlKvXiDKFT_m5fgewHGv1H0",
+    authDomain: "lostandfound-e3d1d.firebaseapp.com",
+    projectId: "lostandfound-e3d1d",
+    storageBucket: "lostandfound-e3d1d.appspot.com",
+    messagingSenderId: "798654626600",
+    appId: "1:798654626600:web:fb253dafc2aa9e47096e1d",
+    measurementId: "G-H51RQ9Q3R1"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  document.getElementById('lost-btn').addEventListener('click', function() {
+    document.getElementById('lost-modal').style.display = 'block';
+  });
+
+  document.getElementById('found-btn').addEventListener('click', function() {
+    document.getElementById('found-modal').style.display = 'block';
+  });
+
+  var closeButtons = document.getElementsByClassName('close');
+  for (var i = 0; i < closeButtons.length; i++) {
+    closeButtons[i].addEventListener('click', function() {
+      var modal = this.parentElement.parentElement;
+      modal.style.display = 'none';
+    });
+  }
+
+  window.addEventListener('click', function(event) {
+    var modal = document.getElementById('lost-modal');
+    if (event.target == modal) {
+      modal.style.display = 'none';
+    }
+
+    modal = document.getElementById('found-modal');
+    if (event.target == modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  document.getElementById('lost-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+    const name = formData.get('name');
+    const location = formData.get('location');
+    const date = formData.get('date');
+    const email = formData.get('email')
+    const contact = formData.get('contact');
+    const info = formData.get('info');
+    const photo = formData.get('photo');
+    const userId = firebase.auth().currentUser.uid;
+
+    const reader = new FileReader();
+    reader.onload = function() {
+      const photoURL = reader.result;
+      db.ref('lost-items').push({
+        name: name,
+        location: location,
+        date: date,
+        contact: contact,
+        email:email,
+        info: info,
+        photoURL: photoURL,
+        userId: userId,
+        found: false
+      });
+    };
+    reader.readAsDataURL(photo);
+
+    document.getElementById('lost-modal').style.display = 'none';
+    this.reset();
+  });
+
+  document.getElementById('found-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+    const name = formData.get('name');
+    const location = formData.get('location');
+    const date = formData.get('date');
+    const contact = formData.get('contact');
+    const info = formData.get('info');
+    const photo = formData.get('photo');
+    const userId = firebase.auth().currentUser.uid;
+
+    const reader = new FileReader();
+    reader.onload = function() {
+      const photoURL = reader.result;
+      db.ref('found-items').push({
+        name: name,
+        location: location,
+        date: date,
+        contact: contact,
+        info: info,
+        photoURL: photoURL,
+        userId: userId
+      });
+    };
+    reader.readAsDataURL(photo);
+
+    document.getElementById('found-modal').style.display = 'none';
+    this.reset();
+  });
+
+  function displayLostItem(item, key) {
+    const lostItemsDiv = document.getElementById('lost-items');
+    const container = document.createElement('div');
+    container.className = 'item';
+    const img = document.createElement('img');
+    img.src = item.photoURL;
+    img.alt = 'Lost Item Photo';
+    const infoParagraph = document.createElement('p');
+    let contactInfo = '';
+    if (item.email) {
+      contactInfo = `Email: ${item.email}`;
+    } else if (item.contact) {
+      contactInfo = `Contact: ${item.contact}`;
+    }
+    infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br>${item.date}<br>${item.info}<br>${contactInfo}`;
+
+    const isAdmin = firebase.auth().currentUser.email === 'security@nmims.edu';
+    const currentUserId = firebase.auth().currentUser.uid;
+
+    if (isAdmin || item.userId === currentUserId) {
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.className = 'secondary-btn';
+      deleteButton.innerHTML = `<div>Delete</div>`;
+      deleteButton.dataset.itemId = key;
+      deleteButton.addEventListener('click', function() {
+        deleteLostItem(key);
+      });
+
+      container.appendChild(img);
+      container.appendChild(infoParagraph);
+      container.appendChild(deleteButton);
+
+      if (isAdmin) {
+        const foundButton = document.createElement('button');
+        foundButton.textContent = 'Handover';
+        foundButton.className = 'primary-btn';
+        foundButton.innerHTML = `<div>Found</div>`;
+        foundButton.addEventListener('click', function() {
+          markAsFound(key, item);
+        });
+
+        const contactButton = document.createElement('button');
+        contactButton.textContent = 'Contact';
+        contactButton.className = 'primary-btn';
+        contactButton.innerHTML = `<div>Contact</div>`;
+        contactButton.addEventListener('click', function() {
+          contactUser(item.email);
+        });
+
+        container.appendChild(foundButton);
+        container.appendChild(contactButton);
+      }
+    } else {
+      container.appendChild(img);
+      container.appendChild(infoParagraph);
+    }
+
+    if (item.found) {
+      container.classList.add('found');
+      container.querySelectorAll('.found-button, .delete-button').forEach(button => {
+        button.style.display = 'none';
+      });
+    }
+
+    lostItemsDiv.appendChild(container);
+  }
+
+  function markAsFound(key, item) {
+    if (confirm("Are you sure you want to mark this item as found?")) {
+      db.ref('lost-items/' + key).update({
+        found: true
+      }).then(() => {
+        deleteLostItem(key);
+        addToHistory(item);
+      });
+    }
+  }
+
+  function addToHistory(item) {
+    db.ref('history').push(item);
+  }
+
+  function displayHistoryItem(item) {
+    const historyItemsDiv = document.getElementById('history-items');
+    const container = document.createElement('div');
+    container.className = 'item';
+    const img = document.createElement('img');
+    img.src = item.photoURL;
+    img.alt = 'Item Photo';
+    const infoParagraph = document.createElement('p');
+    infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br>${item.date}<br>${item.info}<br>Contact: ${item.contact}`;
+    container.appendChild(img);
+    container.appendChild(infoParagraph);
+    historyItemsDiv.appendChild(container);
+  }
+
+  function deleteLostItem(key) {
+    if (confirm("Are you sure you want to delete this lost item?")) {
+      db.ref('lost-items/' + key).remove();
+    }
+  }
+  
+  function contactUser(email) {
+    fetch('email_template.html')
+    .then(response => response.text())
+    .then(data => {
+      window.emailTemplate = data;
+    })
+    .catch(error => console.error('Error loading email template:', error));
+    Email.send({
+    
+      Host: "smtp.elasticemail.com",
+    Username: "mohd26sohail@gmail.com",
+    Password: "37ADD05B20913C558B071CAAC1756A5EA7A8",
+      To: email,
+      From: 'mohd26sohail@gmail.com',
+      Subject: 'Lost Item',
+      Body: 'Hello,\n\nWe have found your lost item. Please provide security with more details to help us identify and return it to you.\n\nThank you,\nLost and Found Team'
+    }).then(function(message) {
+      alert("Email sent successfully");
+    })
+    .catch(function(error) {
+      console.error("Error sending email:", error);
+    });
+  }
+  function handleSearchInput() {
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const items = document.querySelectorAll('.item');
+
+    items.forEach(item => {
+      const itemName = item.querySelector('strong').innerText.toLowerCase();
+      if (itemName.includes(searchText)) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    if (searchText.trim() === '') {
+      window.location.reload();
+    }
+  }
+
+  document.getElementById('searchInput').addEventListener('input', function() {
+    handleSearchInput();
+  });
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      const userId = user.uid;
+      const userEmail = user.email;
+      const userName = user.displayName || user.email.split('@')[0];
+      document.getElementById('user-name').textContent = userName;
+
+      // Check if the user is an admin (security personnel)
+      const isAdmin = userEmail === 'security@nmims.edu';
+
+      // Add logout button event listener
+      document.getElementById('logout-btn').addEventListener('click', function() {
+        firebase.auth().signOut()
+          .then(() => {
+            console.log('User signed out successfully');
+            window.location.href = 'index.html'; // Redirect to the login page
+          })
+          .catch((error) => {
+            console.error('Error signing out:', error);
+          });
+      });
+
+      if (isAdmin) {
+        // Show the lost item section and hide the found item section and button
+        document.getElementById('lost-item-section').style.display = 'block';
+        document.getElementById('found-item-section').style.display = 'none';
+        document.getElementById('found-btn').style.display = 'none';
+
+        db.ref('lost-items').on('value', function(snapshot) {
+          document.getElementById('lost-items').innerHTML = '';
+          snapshot.forEach(function(child) {
+            var item = child.val();
+            var key = child.key;
+            displayLostItem(item, key);
+          });
+        });
+
+        db.ref('history').on('value', function(snapshot) {
+          document.getElementById('history-items').innerHTML = '';
+          snapshot.forEach(function(child) {
+            var item = child.val();
+            displayHistoryItem(item);
+          });
+        });
+      } else {
+        // Show the lost item section and the found item section for students
+        document.getElementById('lost-item-section').style.display = 'block';
+        document.getElementById('found-item-section').style.display = 'none';
+
+        db.ref('lost-items').on('value', function(snapshot) {
+          document.getElementById('lost-items').innerHTML = '';
+          snapshot.forEach(function(child) {
+            var item = child.val();
+            var key = child.key;
+            displayLostItem(item, key);
+          });
+        });
+
+        db.ref('found-items').on('value', function(snapshot) {
+          document.getElementById('found-items').innerHTML = '';
+          snapshot.forEach(function(child) {
+            var item = child.val();
+            var key = child.key;
+            displayFoundItem(item, key);
+          });
+        });
+
+        db.ref('history').on('value', function(snapshot) {
+          document.getElementById('history-items').innerHTML = '';
+          snapshot.forEach(function(child) {
+            var item = child.val();
+            displayHistoryItem(item);
+          });
+        });
+      }
+    } else {
+      document.getElementById('lost-items').innerHTML = '';
+      document.getElementById('found-items').innerHTML = '';
+      document.getElementById('history-items').innerHTML ='';
+      document.getElementById('user-name').textContent = '';
+    }
+  });
+
+  function displayFoundItem(item, key) {
+    const foundItemsDiv = document.getElementById('found-items');
+    const container = document.createElement('div');
+    container.className = 'item';
+    const img = document.createElement('img');
+    img.src = item.photoURL;
+    img.alt = 'Found Item Photo';
+    const infoParagraph = document.createElement('p');
+    infoParagraph.innerHTML = `${item.name} found at ${item.location} on ${item.date}<br>${item.info}<br>Contact: ${item.contact}`;
+    const currentUserId = firebase.auth().currentUser.uid;
+
+    if (item.userId === currentUserId) {
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.className = 'secondary-btn';
+      deleteButton.innerHTML = `<div>
+        Delete
+      </div>`;
+      deleteButton.dataset.itemId = key;
+      deleteButton.addEventListener('click', function() {
+        deleteFoundItem(key);
+      });
+
+      container.appendChild(img);
+      container.appendChild(infoParagraph);
+      container.appendChild(deleteButton);
+    } else {
+      container.appendChild(img);
+      container.appendChild(infoParagraph);
+    }
+
+    foundItemsDiv.appendChild(container);
+  }
+
+  function deleteFoundItem(key) {
+    if (confirm("Are you sure you want to delete this found item?")) {
+      db.ref('found-items/' + key).remove();
+    }
+  }
+  
+</script>
+</body>
+</html>
