@@ -34,7 +34,7 @@
   </div>
   <div class="user-info">
     <img width="20" height="20" src="https://img.icons8.com/pulsar-line/48/user.png" alt="user" />
-    <span id="user-name"></span>
+    <span id="user-name" style="color: black;"></span>
   </div>
   <button id="logout-btn" class="secondary-btn">Logout</button>
 </header>
@@ -48,8 +48,7 @@
 
 
   <div class="content">
-    <h2>About Lost and Found Portal</h2>
-    <video src="media/iLost_the_search_engine_for_lost__found.mp4" height="400px" width="auto" autoplay style="float: right; padding: 50px;"></video>
+    <video src="media/iLost_the_search_engine_for_lost__found.mp4" width="50%" height="auto" controls style="float: right; padding-left: 10px;"></video>
     <p>The Lost and Found Portal is a comprehensive digital platform designed to streamline the process of reporting and locating lost or found items within our campus community. Our mission is to create a secure and efficient system that bridges the gap between those who have misplaced their belongings and those who have discovered unclaimed items.</p>
 
     <h3>Our Objectives</h3>
@@ -62,7 +61,7 @@
   
     <h3>How It Works</h3>
   
-    <p>The Lost and Found Portal offers two distinct sections: "Report Lost" and "Report Found." If you have misplaced an item, simply access the "Report Lost" section and provide details about the item, including its description, location last seen, and any additional information that may aid in its identification. Conversely, if you have come across an unclaimed item, you can use the "Report Found" section to submit details about the item's location and condition.</p>
+    <p> If you have misplaced an item, simply access the "Report Lost" section and provide details about the item, including its description, location last seen, and any additional information that may aid in its identification. Conversely, if you have come across an unclaimed item, you can submit it to the security incharge for further process</p>
   
     <p>Once an item is reported, our dedicated team of security personnel will diligently work to match lost items with their rightful owners. Additionally, the portal's "History" section allows users to view previously reported items, fostering transparency and accountability throughout the process.</p>
   
@@ -82,7 +81,7 @@
   </div>
 </section>
 
-<!-- <section id="found-item-section" style="display: none;">
+<section id="found-item-section" style="display: none;">
   <h2>Items Found by Security/Student</h2>
   <div class="found-items" id="found-items">
     Found items will be dynamically added here
@@ -90,7 +89,7 @@
   <div class="button-container" style="display: none;">
     <button id="found-btn" class="primary-btn">Report Found</button>
   </div>
-</section> --> 
+</section> 
 
 <section id="history">
   <h2>History</h2>
@@ -155,9 +154,9 @@
     document.getElementById('lost-modal').style.display = 'block';
   });
 
-  document.getElementById('found-btn').addEventListener('click', function() {
-    document.getElementById('found-modal').style.display = 'block';
-  });
+  // document.getElementById('found-btn').addEventListener('click', function() {
+  //   document.getElementById('found-modal').style.display = 'block';
+  // });
 
   var closeButtons = document.getElementsByClassName('close');
   for (var i = 0; i < closeButtons.length; i++) {
@@ -516,3 +515,4 @@
 </script>
 </body>
 </html>
+ 
