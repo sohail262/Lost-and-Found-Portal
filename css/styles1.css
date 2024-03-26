@@ -29,7 +29,7 @@ header {
 
 .heading h1{
   font-size: xx-large;
-  color:black;
+  color:rgb(1, 1, 1);
   font-family: Editech;
   text-align: center;
 }
@@ -50,16 +50,17 @@ header {
 
 .video video{
   display: flex;
+  
 }
 
 
 .content{
-  background-color: rgba(255, 255, 255, 0.593);
+  background-color: rgba(255, 255, 255, 0.489);
  margin: 10px;
  color: black;
  text-align: justify;
   width: auto;
-  padding: 40PX;
+  padding: 40px;
 }
 
 #logout-btn{
@@ -88,30 +89,6 @@ color: crimson;
 .user-info:hover{
   color: crimson;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #lost-item-section, #found-item-section {
@@ -459,27 +436,77 @@ color: crimson;
     /* media queries */
     /* Styles for smaller screens */
 
-/* Styles for even smaller screens */
-@media (max-width: 480px) {
-  .logo img {
-    height: 40px;
-  }
+     /* Responsive styles */
+     @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+      }
 
-  .heading h1 {
-    font-size: 1rem;
-  }
+      .logo img {
+        height: 60px;
+      }
 
-  .search_area input[type="text"] {
-    width: 100%;
-    max-width: 200px;
-  }
+      .search_area {
+        margin-right: 0;
+        margin-top: 10px;
+      }
 
-  .user-info {
-    margin-right: 0;
-  }
+      .user-info {
+        margin-top: 10px;
+      }
 
-  #logout-btn {
-    margin-left: 0;
-    margin-top: 0;
-  }
-}
+      #logout-btn {
+        margin-top: 10px;
+      }
+
+      .heading h1 {
+        font-size: 1.5rem;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .content video {
+        float: none;
+        width: 100%;
+        padding: 0;
+        margin-bottom: 20px;
+      }
+
+      .lost-items,
+      .found-items,
+      .history-items {
+        justify-content: center;
+      }
+
+      .item {
+        width: 90%;
+        max-width: 300px;
+      }
+
+      .item img {
+        height: 120px;
+      }
+
+      .modal-content {
+        width: 90%;
+        margin: 15% auto;
+      }
+    }
+    @media (max-width: 768px) {
+      /* ... existing media query rules ... */
+    
+      .content video {
+        height: auto;
+        max-width: 100%;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .content video {
+        height: 200px;
+      }
+    }
