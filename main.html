@@ -247,102 +247,143 @@
   });
 
   function displayLostItem(item, key) {
-    const lostItemsDiv = document.getElementById('lost-items');
-    const container = document.createElement('div');
-    container.className = 'item';
-    const img = document.createElement('img');
-    img.src = item.photoURL;
-    img.alt = 'Lost Item Photo';
-    const infoParagraph = document.createElement('p');
-    let contactInfo = '';
-    if (item.email) {
-      contactInfo = `Email: ${item.email}`;
-    } else if (item.contact) {
-      contactInfo = `Contact: ${item.contact}`;
-    }
-    infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br>${item.date}<br>${item.info}<br>${contactInfo}`;
-
+      const lostItemsDiv = document.getElementById('lost-items');
+      const container = document.createElement('div');
+      container.className = 'item';
+      const img = document.createElement('img');
+      img.src = item.photoURL;
+      img.alt = 'Lost Item Photo';
+      const infoParagraph = document.createElement('p');
+      let contactInfo = '';
+      if (item.email) {
+        contactInfo = `Email: ${item.email}`;
+      } else if (item.contact) {
+        contactInfo = `Contact: ${item.contact}`;
+      }
+      infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br>${item.date}<br>${item.info}<br>${contactInfo}`;
     const isAdmin = firebase.auth().currentUser.email === 'security@nmims.edu';
     const currentUserId = firebase.auth().currentUser.uid;
 
     if (isAdmin || item.userId === currentUserId) {
-      const deleteButton = document.createElement('button');
-      deleteButton.textContent = 'Delete';
-      deleteButton.className = 'secondary-btn';
-      deleteButton.innerHTML = `<div>Delete</div>`;
-      deleteButton.dataset.itemId = key;
-      deleteButton.addEventListener('click', function() {
-        deleteLostItem(key);
-      });
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.className = 'secondary-btn';
+        deleteButton.innerHTML = `<div>Delete</div>`;
+        deleteButton.dataset.itemId = key;
+        deleteButton.addEventListener('click', function() {
+          deleteLostItem(key);
+        });
 
-      container.appendChild(img);
-      container.appendChild(infoParagraph);
-      container.appendChild(deleteButton);
+        container.appendChild(img);
+        container.appendChild(infoParagraph);
+        container.appendChild(deleteButton);
 
+      
       if (isAdmin) {
-        const foundButton = document.createElement('button');
-        foundButton.textContent = 'Handover';
-        foundButton.className = 'primary-btn';
-        foundButton.innerHTML = `<div>Found</div>`;
-        foundButton.addEventListener('click', function() {
-          markAsFound(key, item);
-        });
+          const foundButton = document.createElement('button');
+          foundButton.textContent = 'Handover';
+          foundButton.className = 'primary-btn';
+          foundButton.innerHTML = `<div>Found</div>`;
+          foundButton.addEventListener('click', function() {
+            handleHandover(key, item);
+          });
 
-        const contactButton = document.createElement('button');
-        contactButton.textContent = 'Contact';
-        contactButton.className = 'primary-btn';
-        contactButton.innerHTML = `<div>Contact</div>`;
-        contactButton.addEventListener('click', function() {
-          contactUser(item.email);
-        });
+          const contactButton = document.createElement('button');
+          contactButton.textContent = 'Contact';
+          contactButton.className = 'primary-btn';
+          contactButton.innerHTML = `<div>Contact</div>`;
+          contactButton.addEventListener('click', function() {
+            contactUser(item.email);
+          });
 
-        container.appendChild(foundButton);
-        container.appendChild(contactButton);
+          container.appendChild(foundButton);
+          container.appendChild(contactButton);
+        }
+      } else {
+        container.appendChild(img);
+        container.appendChild(infoParagraph);
       }
-    } else {
-      container.appendChild(img);
-      container.appendChild(infoParagraph);
+
+      if (item.found) {
+        container.classList.add('found');
+        container.querySelectorAll('.found-button, .delete-button').forEach(button => {
+          button.style.display = 'none';
+        });
+      }
+
+      lostItemsDiv.appendChild(container);
+    }
+    function handleHandover(key, item) {
+  const otp = generateOTP();
+  sendOTPToEmail(item.email, otp);
+
+  const enteredOTP = prompt("Please enter the OTP sent to the student's email:");
+
+  if (verifyOTP(otp, enteredOTP)) {
+    const confirmMove = confirm("OTP verified. Do you want to move this item to history?");
+    if (confirmMove) {
+      markAsFound(key, item);
+    }
+  } else {
+    alert("Invalid OTP. Handover canceled.");
+  }
+}
+  function generateOTP() {
+      return Math.floor(100000 + Math.random() * 900000);
     }
 
-    if (item.found) {
-      container.classList.add('found');
-      container.querySelectorAll('.found-button, .delete-button').forEach(button => {
-        button.style.display = 'none';
+    function sendOTPToEmail(email, otp) {
+      Email.send({
+        Host: "smtp.elasticemail.com",
+        Username: "mohd26sohail@gmail.com",
+        Password: "37ADD05B20913C558B071CAAC1756A5EA7A8",
+        To: email,
+        From: 'mohd26sohail@gmail.com',
+        Subject: "Lost Item Collection OTP",
+        Body: `Your OTP for collecting your lost item is: ${otp}`,
+      })
+      .then(function(message) {
+        console.log("OTP sent successfully");
+      })
+      .catch(function(error) {
+        console.error("Error sending OTP:", error);
       });
     }
-
-    lostItemsDiv.appendChild(container);
-  }
-
+    function verifyOTP(otp, enteredOTP) {
+  return otp == enteredOTP;
+}
   function markAsFound(key, item) {
-    if (confirm("Are you sure you want to mark this item as found?")) {
-      db.ref('lost-items/' + key).update({
-        found: true
-      }).then(() => {
-        deleteLostItem(key);
-        addToHistory(item);
-      });
+      if (confirm("Are you sure you want to mark this item as found?")) {
+        db.ref('lost-items/' + key).update({
+          found: true
+        }).then(() => {
+          deleteLostItem(key);
+          addToHistory(item);
+        });
+      }
     }
-  }
 
   function addToHistory(item) {
-    db.ref('history').push(item);
-  }
+      const userId = firebase.auth().currentUser.uid;
+      db.ref('history').push({
+        ...item,
+        userId: userId
+      });
+    }
 
   function displayHistoryItem(item) {
-    const historyItemsDiv = document.getElementById('history-items');
-    const container = document.createElement('div');
-    container.className = 'item';
-    const img = document.createElement('img');
-    img.src = item.photoURL;
-    img.alt = 'Item Photo';
-    const infoParagraph = document.createElement('p');
-    infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br>${item.date}<br>${item.info}<br>Contact: ${item.contact}`;
-    container.appendChild(img);
-    container.appendChild(infoParagraph);
-    historyItemsDiv.appendChild(container);
-  }
-
+      const historyItemsDiv = document.getElementById('history-items');
+      const container = document.createElement('div');
+      container.className = 'item';
+      const img = document.createElement('img');
+      img.src = item.photoURL;
+      img.alt = 'Item Photo';
+      const infoParagraph = document.createElement('p');
+      infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br>${item.date}<br>${item.info}<br>Contact: ${item.contact}<br>SAP ID: ${item.email.split('@')[0]}`;
+      container.appendChild(img);
+      container.appendChild(infoParagraph);
+      historyItemsDiv.appendChild(container);
+    }
   function deleteLostItem(key) {
     if (confirm("Are you sure you want to delete this lost item?")) {
       db.ref('lost-items/' + key).remove();
