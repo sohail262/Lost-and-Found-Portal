@@ -383,7 +383,7 @@
   img.src = item.photoURL;
   img.alt = 'Item Photo';
   const infoParagraph = document.createElement('p');
-  infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br>${item.date}<br>${item.info}<br>Contact: ${item.contact}<br>SAP ID: ${item.sapId}<br>Timestamp: ${item.timestamp}`;
+  infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br> Date: ${item.date}<br> Info: ${item.info}<br>It is handovered to <br>SAP ID: ${item.sapId}<br>Timestamp: ${item.timestamp}`;
   container.appendChild(img);
   container.appendChild(infoParagraph);
   historyItemsDiv.appendChild(container);
