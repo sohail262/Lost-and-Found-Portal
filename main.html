@@ -108,6 +108,7 @@
       Last Location:<input name="location" placeholder="Location" required>
       Date:<input name="date" type="date" >
       Your Contact: <input name="contact" placeholder="Contact" >
+      SAP ID:<input name="sapId" placeholder="Enter your SAP ID" required pattern="\d{10,12}" title="SAP ID should be 10 to 12 digits">
       Email ID: <input type="email" name="email" placeholder="Enter your Email Address">
       Additional Information<textarea name="info" placeholder="Additional Information about item lost"></textarea>
       Image:<input type="file" name="photo" id="lost-photo-input" accept="image/*">
@@ -192,6 +193,7 @@
     const email = formData.get('email')
     const contact = formData.get('contact');
     const info = formData.get('info');
+    const sapId = formData.get('sapId'); // Get the SAP ID from the form
     const photo = formData.get('photo');
     const userId = firebase.auth().currentUser.uid;
 
@@ -205,6 +207,7 @@
         contact: contact,
         email:email,
         info: info,
+        sapId: sapId, // Store the SAP ID in the database
         photoURL: photoURL,
         userId: userId,
         found: false
@@ -365,25 +368,26 @@
 
   function addToHistory(item) {
       const userId = firebase.auth().currentUser.uid;
+      const timestamp = new Date().toLocaleString(); // Get the current timestamp
       db.ref('history').push({
         ...item,
-        userId: userId
+        userId: userId,
+        timestamp: timestamp // Add the timestamp to the item data
       });
     }
-
-  function displayHistoryItem(item) {
-      const historyItemsDiv = document.getElementById('history-items');
-      const container = document.createElement('div');
-      container.className = 'item';
-      const img = document.createElement('img');
-      img.src = item.photoURL;
-      img.alt = 'Item Photo';
-      const infoParagraph = document.createElement('p');
-      infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br>${item.date}<br>${item.info}<br>Contact: ${item.contact}<br>SAP ID: ${item.email.split('@')[0]}`;
-      container.appendChild(img);
-      container.appendChild(infoParagraph);
-      historyItemsDiv.appendChild(container);
-    }
+    function displayHistoryItem(item) {
+  const historyItemsDiv = document.getElementById('history-items');
+  const container = document.createElement('div');
+  container.className = 'item';
+  const img = document.createElement('img');
+  img.src = item.photoURL;
+  img.alt = 'Item Photo';
+  const infoParagraph = document.createElement('p');
+  infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br>${item.date}<br>${item.info}<br>Contact: ${item.contact}<br>SAP ID: ${item.sapId}<br>Timestamp: ${item.timestamp}`;
+  container.appendChild(img);
+  container.appendChild(infoParagraph);
+  historyItemsDiv.appendChild(container);
+}
   function deleteLostItem(key) {
     if (confirm("Are you sure you want to delete this lost item?")) {
       db.ref('lost-items/' + key).remove();
