@@ -23,39 +23,42 @@ measurementId: "G-H51RQ9Q3R1"
   
     const email = registerForm['email'].value;
     const password = registerForm['password'].value;
-    function showToast(message) {
-      const toastContainer = document.querySelector('.toast-container');
-      const toast = document.createElement('div');
-      toast.classList.add('toast');
-      toast.textContent = message;
-      toastContainer.appendChild(toast);
-    
-      setTimeout(() => {
-        toast.classList.add('show');
-      }, 100);
-    
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-          toastContainer.removeChild(toast);
-        }, 300);
-      }, 3000);
-    }
-
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
     
     auth.createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         // Registered successfully
         const user = userCredential.user;
         console.log('User registered:', user);
-        window.location.href = 'index.html'; // Redirect to the login page
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error('Registration error:', errorMessage);
-        // Display error message to the user
-        showToast(errorMessage);
-      });
-  });
-  
+          // Display Toast notification for successful registration
+          Toast.fire({
+            icon: "success",
+            title: "Registered successfully"
+          });
+
+          // Redirect to the login page after registration
+          setTimeout(() => {
+            window.location.href = 'index.html'; // Redirect to the login page
+          }, 2000);
+        })
+        .catch((error) => {
+          const errorMessage = error.message;
+          console.error('Registration error:', errorMessage);
+
+          // Display Toast notification for registration error
+          Toast.fire({
+            icon: "error",
+            title: "Failed Registering User"
+          });
+        });
+    });
