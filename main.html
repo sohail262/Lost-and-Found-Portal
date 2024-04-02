@@ -8,17 +8,12 @@
   <link rel="stylesheet" href="css/styles1.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-  
-
-  <style>
-    .found {
-      background-color: #70fc70;
-    }
-  </style>
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-auth.js"></script>
   <script src="https://smtpjs.com/v3/smtp.js"></script>
+  <script src="sweetalert2.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -200,25 +195,32 @@
     const reader = new FileReader();
     reader.onload = function() {
       const photoURL = reader.result;
-      db.ref('lost-items').push({
-        name: name,
-        location: location,
-        date: date,
-        contact: contact,
-        email:email,
-        info: info,
-        sapId: sapId, // Store the SAP ID in the database
-        photoURL: photoURL,
-        userId: userId,
-        found: false
+    db.ref('lost-items').push({
+      name: name,
+      location: location,
+      date: date,
+      email: email,
+      contact: contact,
+      info: info,
+      sapId: sapId,
+      photoURL: photoURL,
+      userId: userId,
+      found: false
+    }).then(() => {
+      Swal.fire({
+        title: "Success!",
+        text: "Uploaded the lost item!",
+        icon: "success"
       });
-    };
-    reader.readAsDataURL(photo);
+    }).catch(error => {
+      console.error("Error uploading lost item:", error);
+    });
+  };
+  reader.readAsDataURL(photo);
 
-    document.getElementById('lost-modal').style.display = 'none';
-    this.reset();
-  });
-
+  document.getElementById('lost-modal').style.display = 'none';
+  this.reset();
+});
   document.getElementById('found-form').addEventListener('submit', function(event) {
     event.preventDefault();
     const formData = new FormData(this);
@@ -286,7 +288,7 @@
           const foundButton = document.createElement('button');
           foundButton.textContent = 'Handover';
           foundButton.className = 'primary-btn';
-          foundButton.innerHTML = `<div>Found</div>`;
+          foundButton.innerHTML = `<div>Handover</div>`;
           foundButton.addEventListener('click', function() {
             handleHandover(key, item);
           });
@@ -316,25 +318,9 @@
 
       lostItemsDiv.appendChild(container);
     }
-    function handleHandover(key, item) {
-  const otp = generateOTP();
-  sendOTPToEmail(item.email, otp);
-
-  const enteredOTP = prompt("Please enter the OTP sent to the student's email:");
-
-  if (verifyOTP(otp, enteredOTP)) {
-    const confirmMove = confirm("OTP verified. Do you want to move this item to history?");
-    if (confirmMove) {
-      markAsFound(key, item);
-    }
-  } else {
-    alert("Invalid OTP. Handover canceled.");
-  }
-}
-  function generateOTP() {
+    function generateOTP() {
       return Math.floor(100000 + Math.random() * 900000);
     }
-
     function sendOTPToEmail(email, otp) {
       Email.send({
         Host: "smtp.elasticemail.com",
@@ -355,26 +341,68 @@
     function verifyOTP(otp, enteredOTP) {
   return otp == enteredOTP;
 }
-  function markAsFound(key, item) {
-      if (confirm("Are you sure you want to mark this item as found?")) {
-        db.ref('lost-items/' + key).update({
-          found: true
-        }).then(() => {
-          deleteLostItem(key);
-          addToHistory(item);
-        });
-      }
-    }
+function handleHandover(key, item) {
+  const otp = generateOTP();
+  sendOTPToEmail(item.email, otp);
 
-  function addToHistory(item) {
-      const userId = firebase.auth().currentUser.uid;
-      const timestamp = new Date().toLocaleString(); // Get the current timestamp
+  const enteredOTP = prompt("Please enter the OTP sent to the student's email:");
+
+  if (verifyOTP(otp, enteredOTP)) {
+    const userId = firebase.auth().currentUser.uid;
+    const timestamp = new Date().toLocaleString();
+
+    // Move the item to history and delete it from the lost items section
+    db.ref('lost-items/' + key).once('value').then(snapshot => {
+      const lostItem = snapshot.val();
       db.ref('history').push({
-        ...item,
+        ...lostItem,
         userId: userId,
-        timestamp: timestamp // Add the timestamp to the item data
+        timestamp: timestamp
+      }).then(() => {
+        db.ref('lost-items/' + key).remove().then(() => {
+Swal.fire({
+  position: "center",
+  icon: "success",
+  title: "Item Handovered",
+  showConfirmButton: false,
+  timer: 1500
+});
+        }).catch(error => {
+         
+
+
+Swal.fire({
+  position: "top-end",
+  icon: "success",
+  title: "Your work has been saved",
+  showConfirmButton: false,
+  timer: 1500
+});
+        });
+      }).catch(error => {
+        Swal.fire("Error adding the item to history: " + error.message);
       });
-    }
+    }).catch(error => {
+      Swal.fire("Error retrieving lost item data: " + error.message);
+    });
+  } else {  
+    alert("Invalid OTP. Handover canceled.");
+  }
+}
+
+ 
+
+   
+  
+  // function addToHistory(item) {
+  //     const userId = firebase.auth().currentUser.uid;
+  //     const timestamp = new Date().toLocaleString(); // Get the current timestamp
+  //     db.ref('history').push({
+  //       ...item,
+  //       userId: userId,
+  //       timestamp: timestamp // Add the timestamp to the item data
+  //     });
+  //   }
     function displayHistoryItem(item) {
   const historyItemsDiv = document.getElementById('history-items');
   const container = document.createElement('div');
@@ -388,19 +416,32 @@
   container.appendChild(infoParagraph);
   historyItemsDiv.appendChild(container);
 }
-  function deleteLostItem(key) {
-    if (confirm("Are you sure you want to delete this lost item?")) {
-      db.ref('lost-items/' + key).remove();
+function deleteLostItem(key) {
+  // Using SweetAlert for confirmation
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // If confirmed, proceed with deletion
+      db.ref('lost-items/' + key).remove().then(() => {
+        // After deletion, show success message using SweetAlert
+        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+      }).catch((error) => {
+        // If an error occurs, show error message using SweetAlert
+        Swal.fire("Error!", "There was an error deleting the file: " + error, "error");
+      });
     }
-  }
+  });
+}
   
   function contactUser(email) {
-    fetch('email_template.html')
-    .then(response => response.text())
-    .then(data => {
-      window.emailTemplate = data;
-    })
-    .catch(error => console.error('Error loading email template:', error));
+  
     Email.send({
     
       Host: "smtp.elasticemail.com",
@@ -411,7 +452,7 @@
       Subject: 'Lost Item',
       Body: 'Hello,\n\nWe have found your lost item. Please provide security with more details to help us identify and return it to you.\n\nThank you,\nLost and Found Team'
     }).then(function(message) {
-      alert("Email sent successfully");
+      Swal.fire("Email sent succesfully!");
     })
     .catch(function(error) {
       console.error("Error sending email:", error);
