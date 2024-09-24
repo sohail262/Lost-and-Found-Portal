@@ -1,17 +1,23 @@
+
 body {
   font-family: 'Nunito', sans-serif;
-  background-image: url('/media/bg.jpg');
+  background-image: url('../background.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   font-size: 16px; /* Set a base font-size for rem units */
   
 }
-
+.montserrat-heading {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing:auto;
+  font-weight: 300; /* You can choose between 100 to 900 depending on how bold you want */
+  font-style:normal;   
+}
 header {
   display: flex;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0);
   justify-content: space-around;
-  color: white;
+  color: rgba(255, 255, 255, 0.692);
   padding: 1vh 2vw; /* 1% of viewport height, 2% of viewport width */
   border-bottom: 1px solid black;
   height: auto; /* 15% of viewport height */
@@ -32,6 +38,8 @@ header {
   color:rgb(1, 1, 1);
   font-family: Editech;
   text-align: center;
+  color:#2e0101;
+  
 }
 .search_area{
   display: inline-block;
@@ -55,8 +63,9 @@ header {
 
 
 .content{
-  background-color: rgba(255, 255, 255, 0.489);
+  background-color: rgb(255, 255, 255);
  margin: 10px;
+ border-radius: 3%;
  color: black;
  text-align: justify;
   width: auto;
@@ -510,3 +519,79 @@ color: crimson;
         height: 200px;
       }
     }
+    
+    /* loader */
+    .loader {
+      position: relative;
+      width: 2.5em;
+      height: 2.5em;
+      transform: rotate(165deg);
+     }
+     
+     .loader:before, .loader:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: block;
+      width: 0.5em;
+      height: 0.5em;
+      border-radius: 0.25em;
+      transform: translate(-50%, -50%);
+     }
+     
+     .loader:before {
+      animation: before8 2s infinite;
+     }
+     
+     .loader:after {
+      animation: after6 2s infinite;
+     }
+     
+     @keyframes before8 {
+      0% {
+       width: 0.5em;
+       box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
+      }
+     
+      35% {
+       width: 2.5em;
+       box-shadow: 0 -0.5em rgba(225, 20, 98, 0.75), 0 0.5em rgba(111, 202, 220, 0.75);
+      }
+     
+      70% {
+       width: 0.5em;
+       box-shadow: -1em -0.5em rgba(225, 20, 98, 0.75), 1em 0.5em rgba(111, 202, 220, 0.75);
+      }
+     
+      100% {
+       box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
+      }
+     }
+     
+     @keyframes after6 {
+      0% {
+       height: 0.5em;
+       box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
+      }
+     
+      35% {
+       height: 2.5em;
+       box-shadow: 0.5em 0 rgba(61, 184, 143, 0.75), -0.5em 0 rgba(233, 169, 32, 0.75);
+      }
+     
+      70% {
+       height: 0.5em;
+       box-shadow: 0.5em -1em rgba(61, 184, 143, 0.75), -0.5em 1em rgba(233, 169, 32, 0.75);
+      }
+     
+      100% {
+       box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
+      }
+     }
+     
+     .loader {
+      position: absolute;
+      top: calc(50% - 1.25em);
+      left: calc(50% - 1.25em);
+     }

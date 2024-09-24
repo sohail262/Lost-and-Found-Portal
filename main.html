@@ -4,9 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lost and Found Portal</title>
+  <meta name="description" content="Lost and Found Portal, NMIMS">
+  <meta name="keywords" content="Lostandfound, Lost and Found Portal, NMIMS, Lost and found portal nmims">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles1.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-database.js"></script>
@@ -14,6 +17,66 @@
   <script src="https://smtpjs.com/v3/smtp.js"></script>
   <script src="sweetalert2.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .loader {
+      position: relative;
+      width: 2.5em;
+      height: 2.5em;
+      transform: rotate(165deg);
+    }
+    .loader:before, .loader:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: block;
+      width: 0.5em;
+      height: 0.5em;
+      border-radius: 0.25em;
+      transform: translate(-50%, -50%);
+    }
+    .loader:before {
+      animation: before8 2s infinite;
+    }
+    .loader:after {
+      animation: after6 2s infinite;
+    }
+    @keyframes before8 {
+      0% {
+        width: 0.5em;
+        box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
+      }
+      35% {
+        width: 2.5em;
+        box-shadow: 0 -0.5em rgba(225, 20, 98, 0.75), 0 0.5em rgba(111, 202, 220, 0.75);
+      }
+      70% {
+        width: 0.5em;
+        box-shadow: -1em -0.5em rgba(225, 20, 98, 0.75), 1em 0.5em rgba(111, 202, 220, 0.75);
+      }
+      100% {
+        box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
+      }
+    }
+    @keyframes after6 {
+      0% {
+        height: 0.5em;
+        box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
+      }
+      35% {
+        height: 2.5em;
+        box-shadow: 0.5em 0 rgba(61, 184, 143, 0.75), -0.5em 0 rgba(233, 169, 32, 0.75);
+      }
+      70% {
+        height: 0.5em;
+        box-shadow: 0.5em -1em rgba(61, 184, 143, 0.75), -0.5em 1em rgba(233, 169, 32, 0.75);
+      }
+      100% {
+        box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
+      }
+    }
+    </style>
+    
 </head>
 
 <body>
@@ -33,19 +96,12 @@
   </div>
   <button id="logout-btn" class="secondary-btn">Logout</button>
 </header>
-
-
 <div class="heading">
-  <h1>Lost and Found Portal</h1>
+  <h1 class="montserrat-heading">LOST AND FOUND PORTAL</h1>
 </div>
-
-
-
-
   <div class="content">
     <video src="media/iLost_the_search_engine_for_lost__found.mp4" width="50%" height="auto" controls style="float: right; padding-left: 10px;"></video>
     <p>The Lost and Found Portal is a comprehensive digital platform designed to streamline the process of reporting and locating lost or found items within our campus community. Our mission is to create a secure and efficient system that bridges the gap between those who have misplaced their belongings and those who have discovered unclaimed items.</p>
-
     <h3>Our Objectives</h3>
     <ul>
       <li>Provide a user-friendly interface for students, staff, and faculty to report lost or found items.</li>
@@ -53,20 +109,13 @@
       <li>Facilitate communication between the involved parties to expedite the return of lost items.</li>
       <li>Promote a culture of responsibility and accountability within our campus community.</li>
     </ul>
-  
     <h3>How It Works</h3>
-  
     <p> If you have misplaced an item, simply access the "Report Lost" section and provide details about the item, including its description, location last seen, and any additional information that may aid in its identification. Conversely, if you have come across an unclaimed item, you can submit it to the security incharge for further process</p>
-  
     <p>Once an item is reported, our dedicated team of security personnel will diligently work to match lost items with their rightful owners. Additionally, the portal's "History" section allows users to view previously reported items, fostering transparency and accountability throughout the process.</p>
-  
     <h3>Get Involved</h3>
     <p>We encourage all members of our campus community to actively participate in the Lost and Found Portal. By working together, we can create a safer and more organized environment, ensuring that lost items find their way back to their rightful owners promptly. Join us in this collective effort to promote responsibility and safeguard the belongings of our fellow community members.</p>
   </div>
-
 <section id="lost-item-section">
-  
-  
   <h2>Lost Items</h2>
   <div class="lost-items" id="lost-items">
     <!-- Lost items will be dynamically added here -->
@@ -75,7 +124,6 @@
     <button id="lost-btn" class="primary-btn">Report Lost</button>
   </div>
 </section>
-
 <section id="found-item-section" style="display: none;">
   <h2>Items Found by Security/Student</h2>
   <div class="found-items" id="found-items">
@@ -85,14 +133,12 @@
     <button id="found-btn" class="primary-btn">Report Found</button>
   </div>
 </section> 
-
 <section id="history">
   <h2>History</h2>
   <div class="history-items" id="history-items">
     <!-- History items will be dynamically added here -->
   </div>
 </section>
-
 <!-- Lost Item Modal -->
 <div id="lost-modal" class="modal">
   <div class="modal-content">
@@ -108,6 +154,7 @@
       Additional Information<textarea name="info" placeholder="Additional Information about item lost"></textarea>
       Image:<input type="file" name="photo" id="lost-photo-input" accept="image/*">
       <button type="submit" class="primary-btn">Submit</button>
+      <div class="loader" id="lost-item-loader" style="display: none;"></div>
     </form>
   </div>
 </div>
@@ -178,23 +225,29 @@
       modal.style.display = 'none';
     }
   });
-
   document.getElementById('lost-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const formData = new FormData(this);
-    const name = formData.get('name');
-    const location = formData.get('location');
-    const date = formData.get('date');
-    const email = formData.get('email')
-    const contact = formData.get('contact');
-    const info = formData.get('info');
-    const sapId = formData.get('sapId'); // Get the SAP ID from the form
-    const photo = formData.get('photo');
-    const userId = firebase.auth().currentUser.uid;
+  event.preventDefault();
+  
+  // Show loader
+  document.getElementById('lost-item-loader').style.display = 'block';
+  
+  // Hide submit button
+  document.querySelector('#lost-form button[type="submit"]').style.display = 'none';
+  
+  const formData = new FormData(this);
+  const name = formData.get('name');
+  const location = formData.get('location');
+  const date = formData.get('date');
+  const email = formData.get('email');
+  const contact = formData.get('contact');
+  const info = formData.get('info');
+  const sapId = formData.get('sapId');
+  const photo = formData.get('photo');
+  const userId = firebase.auth().currentUser.uid;
 
-    const reader = new FileReader();
-    reader.onload = function() {
-      const photoURL = reader.result;
+  const reader = new FileReader();
+  reader.onload = function() {
+    const photoURL = reader.result;
     db.ref('lost-items').push({
       name: name,
       location: location,
@@ -207,12 +260,19 @@
       userId: userId,
       found: false
     }).then(() => {
+      // Hide loader
+      document.getElementById('lost-item-loader').style.display = 'none';
+      document.querySelector('#lost-form button[type="submit"]').style.display = 'block';
+      
       Swal.fire({
         title: "Success!",
-        text: "Uploaded the lost item!",
+        text: "Lost item reported successfully!",
         icon: "success"
       });
     }).catch(error => {
+      // Hide loader on error
+      document.getElementById('lost-item-loader').style.display = 'none';
+      document.querySelector('#lost-form button[type="submit"]').style.display = 'block';
       console.error("Error uploading lost item:", error);
     });
   };
@@ -389,11 +449,6 @@ Swal.fire({
     alert("Invalid OTP. Handover canceled.");
   }
 }
-
- 
-
-   
-  
   // function addToHistory(item) {
   //     const userId = firebase.auth().currentUser.uid;
   //     const timestamp = new Date().toLocaleString(); // Get the current timestamp

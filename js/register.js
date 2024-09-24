@@ -62,3 +62,27 @@ measurementId: "G-H51RQ9Q3R1"
           });
         });
     });
+    document.getElementById('register-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      // Show loader
+      document.getElementById('register-loader').style.display = 'block';
+      
+      // Hide button to prevent double submissions
+      document.getElementById('register-button').style.display = 'none';
+      
+      // Proceed with your form submission logic, e.g., Firebase auth
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(function(userCredential) {
+          // Hide loader after task is done
+          document.getElementById('register-loader').style.display = 'none';
+          document.getElementById('register-button').style.display = 'block';
+          // Registration success logic
+        })
+        .catch(function(error) {
+          document.getElementById('register-loader').style.display = 'none';
+          document.getElementById('register-button').style.display = 'block';
+          // Handle errors
+        });
+    });
+    
