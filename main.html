@@ -3,662 +3,866 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lost and Found Portal</title>
-  <meta name="description" content="Lost and Found Portal, NMIMS">
-  <meta name="keywords" content="Lostandfound, Lost and Found Portal, NMIMS, Lost and found portal nmims">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <title>NMIMS Lost & Found Portal - Dashboard & History Tracker</title>
+  <meta name="description" content="NMIMS University Lost and Found Portal. Report lost items, search unclaimed belongings, and track claim status.">
+  <meta name="keywords" content="Lost and Found Portal, NMIMS, Claimed Items, Unclaimed History, Student Portal">
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Stylesheet -->
   <link rel="stylesheet" href="css/styles1.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+  
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-auth.js"></script>
   <script src="https://smtpjs.com/v3/smtp.js"></script>
-  <script src="sweetalert2.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style>
-    .loader {
-      position: relative;
-      width: 2.5em;
-      height: 2.5em;
-      transform: rotate(165deg);
-    }
-    .loader:before, .loader:after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      display: block;
-      width: 0.5em;
-      height: 0.5em;
-      border-radius: 0.25em;
-      transform: translate(-50%, -50%);
-    }
-    .loader:before {
-      animation: before8 2s infinite;
-    }
-    .loader:after {
-      animation: after6 2s infinite;
-    }
-    @keyframes before8 {
-      0% {
-        width: 0.5em;
-        box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
-      }
-      35% {
-        width: 2.5em;
-        box-shadow: 0 -0.5em rgba(225, 20, 98, 0.75), 0 0.5em rgba(111, 202, 220, 0.75);
-      }
-      70% {
-        width: 0.5em;
-        box-shadow: -1em -0.5em rgba(225, 20, 98, 0.75), 1em 0.5em rgba(111, 202, 220, 0.75);
-      }
-      100% {
-        box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
-      }
-    }
-    @keyframes after6 {
-      0% {
-        height: 0.5em;
-        box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
-      }
-      35% {
-        height: 2.5em;
-        box-shadow: 0.5em 0 rgba(61, 184, 143, 0.75), -0.5em 0 rgba(233, 169, 32, 0.75);
-      }
-      70% {
-        height: 0.5em;
-        box-shadow: 0.5em -1em rgba(61, 184, 143, 0.75), -0.5em 1em rgba(233, 169, 32, 0.75);
-      }
-      100% {
-        box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
-      }
-    }
-    </style>
-    
 </head>
 
 <body>
-<header>
-  <div class="logo">
-    <img src="media/Hyderabad Campus_page-0001.jpg" alt="NMIMS Hyderabad logo">
+  <!-- Header Navbar -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="logo-container">
+        <img src="media/Hyderabad Campus_page-0001.jpg" alt="NMIMS Logo" onerror="this.src='https://img.icons8.com/pulsar-color/96/graduation-cap.png'">
+      </div>
+      <div class="brand-title-group">
+        <h1>LOST & FOUND PORTAL</h1>
+        <div class="brand-subtitle"><i class="fa-solid fa-graduation-cap"></i> NMIMS HYDERABAD</div>
+      </div>
+    </div>
+
+    <!-- Nav Links -->
+    <nav class="nav-menu">
+      <a href="#overview-section" class="nav-link active"><i class="fa-solid fa-house"></i> Overview</a>
+      <a href="#lost-item-section" class="nav-link"><i class="fa-solid fa-box-open"></i> Lost Items</a>
+      <a href="#found-item-section" class="nav-link" id="nav-found-link" style="display: none;"><i class="fa-solid fa-shield-halved"></i> Found Items</a>
+      <a href="#history" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History & Claimed</a>
+    </nav>
+
+    <!-- Global Live Search -->
+    <div class="header-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Quick Search Items..." id="searchInput" id="global-search-input">
+    </div>
+
+    <!-- User Profile & Logout -->
+    <div class="header-user-actions">
+      <div class="user-badge">
+        <div class="user-avatar" id="user-avatar-initial">U</div>
+        <div class="user-details">
+          <span class="user-name-text" id="user-name">Loading...</span>
+          <span class="user-role-badge" id="user-role-text">Student</span>
+        </div>
+      </div>
+      <button id="logout-btn" class="btn-logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+
+    <!-- Hero Showcase Section -->
+    <section id="overview-section" class="hero-banner">
+      <div class="hero-content">
+        <div class="hero-tag">
+          <i class="fa-solid fa-sparkles"></i> Centralized Campus Repository
+        </div>
+        <h2 class="hero-title">Report, Track & Recover Lost Belongings Easily</h2>
+        <p class="hero-description">
+          Our digital portal bridges the gap between misplaced items and rightful owners across the campus community. Search real-time reports, verify claim history, and streamline item returns with security OTP verification.
+        </p>
+        <div class="hero-actions">
+          <button class="btn-primary-action" id="hero-report-btn">
+            <i class="fa-solid fa-plus"></i> Report Lost Item
+          </button>
+          <a href="#history" class="btn-secondary-action">
+            <i class="fa-solid fa-list-check"></i> View History & Claim Status
+          </a>
+        </div>
+
+        <!-- Dynamic Live Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="stat-total-reported">0</div>
+            <div class="stat-label">Total Reported</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-items-claimed" style="color: #34d399;">0</div>
+            <div class="stat-label">Claimed & Returned</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-items-unclaimed" style="color: #fbbf24;">0</div>
+            <div class="stat-label">Active / Unclaimed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Video Showcase -->
+      <div class="hero-video-card">
+        <video src="media/iLost_the_search_engine_for_lost__found.mp4" controls poster="media/hero-banner.png"></video>
+      </div>
+    </section>
+
+    <!-- Active Lost Items Section -->
+    <section id="lost-item-section" class="portal-section">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon"><i class="fa-solid fa-box-open"></i></div>
+          <div>
+            <h2>Currently Reported Lost Items</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Active listings reported by students awaiting owner recovery</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span class="section-badge" id="lost-count-badge">0 Active</span>
+          <button id="lost-btn" class="btn-primary-action">
+            <i class="fa-solid fa-file-circle-plus"></i> Report Lost Item
+          </button>
+        </div>
+      </div>
+
+      <div class="items-grid" id="lost-items">
+        <!-- Lost items will be dynamically populated here -->
+      </div>
+    </section>
+
+    <!-- Found Items Section (Security/Admin/Student) -->
+    <section id="found-item-section" class="portal-section" style="display: none;">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #34d399;">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <h2>Items Secured by Security / Handed In</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Items handed in at security desks ready for verification</p>
+          </div>
+        </div>
+        <button id="found-btn" class="btn-secondary-action" style="display: none;">
+          <i class="fa-solid fa-hand-holding-hand"></i> Report Found Item
+        </button>
+      </div>
+
+      <div class="items-grid" id="found-items">
+        <!-- Found items will be dynamically populated here -->
+      </div>
+    </section>
+
+    <!-- History & Claim Status Section (Enhanced Requirement!) -->
+    <section id="history" class="portal-section">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); color: #fbbf24;">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <div>
+            <h2>History & Claim Status Archive</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Comprehensive log of all past items and their claim status (Claimed vs Unclaimed)</p>
+          </div>
+        </div>
+
+        <!-- History Filter Controls -->
+        <div class="history-controls">
+          <div class="filter-pills">
+            <button class="filter-btn active" data-filter="all"><i class="fa-solid fa-list-ul"></i> All History</button>
+            <button class="filter-btn" data-filter="claimed"><i class="fa-solid fa-circle-check" style="color: #34d399;"></i> Claimed</button>
+            <button class="filter-btn" data-filter="unclaimed"><i class="fa-solid fa-circle-question" style="color: #fbbf24;"></i> Unclaimed</button>
+          </div>
+          <div class="history-search">
+            <i class="fa-solid fa-filter"></i>
+            <input type="text" id="history-filter-input" placeholder="Filter history...">
+          </div>
+        </div>
+      </div>
+
+      <div class="items-grid" id="history-items">
+        <!-- History items dynamically populated here -->
+      </div>
+    </section>
+
   </div>
-  <div class="search_area">
-    <div class="search-symbol">
-      <input type="text" placeholder="Search.." id="searchInput">
-      <i class="fa-solid fa-search"></i>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>&copy; 2026 NMIMS Hyderabad - Lost & Found Portal. All rights reserved. | Built with Security & Accountability.</p>
+  </footer>
+
+  <!-- Lost Item Form Modal -->
+  <div id="lost-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-pen-to-square" style="color: #818cf8;"></i> Report Lost Item</h3>
+        <span class="close">&times;</span>
+      </div>
+      <form id="lost-form" class="modal-form">
+        <div class="form-group">
+          <label><i class="fa-solid fa-tag"></i> Item Name</label>
+          <input name="name" placeholder="e.g. Blue HP Laptop Bag, Airpods Pro, Wallet" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-location-dot"></i> Last Known Location</label>
+          <input name="location" placeholder="e.g. Library 2nd Floor, Canteen, Computer Lab A" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label><i class="fa-regular fa-calendar"></i> Date Lost</label>
+            <input name="date" type="date" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-id-card"></i> Owner SAP ID</label>
+            <input name="sapId" placeholder="10-12 digits SAP ID" required pattern="\d{10,12}" title="SAP ID should be 10 to 12 digits">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label><i class="fa-solid fa-phone"></i> Contact Phone</label>
+            <input name="contact" placeholder="Phone Number" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-regular fa-envelope"></i> Contact Email</label>
+            <input type="email" name="email" placeholder="Campus Email" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-circle-info"></i> Item Description / Distinct Marks</label>
+          <textarea name="info" placeholder="Provide any unique serial numbers, stickers, color descriptions to help identify your item."></textarea>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-regular fa-image"></i> Item Photo (Optional)</label>
+          <div class="file-input-wrapper">
+            <input type="file" name="photo" id="lost-photo-input" accept="image/*">
+            <div class="file-input-text">
+              <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.2rem; color: #818cf8;"></i>
+              <span id="file-chosen-text">Click or drag photo to upload</span>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary-action" style="width: 100%; justify-content: center; margin-top: 10px;">
+          <i class="fa-solid fa-paper-plane"></i> Submit Report
+        </button>
+        <div class="loader-spinner" id="lost-item-loader" style="display: none; margin: 15px auto 0;"></div>
+      </form>
     </div>
   </div>
-  <div class="user-info">
-    <img width="20" height="20" src="https://img.icons8.com/pulsar-line/48/user.png" alt="user" />
-    <span id="user-name" style="color: black;"></span>
+
+  <!-- Found Item Form Modal -->
+  <div id="found-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-shield-halved" style="color: #34d399;"></i> Report Found Item</h3>
+        <span class="close">&times;</span>
+      </div>
+      <form id="found-form" class="modal-form">
+        <div class="form-group">
+          <label><i class="fa-solid fa-tag"></i> Found Item Name</label>
+          <input name="name" placeholder="Item Name" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-location-dot"></i> Location Found</label>
+          <input name="location" placeholder="Where was it found?" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label><i class="fa-regular fa-calendar"></i> Date Found</label>
+            <input name="date" type="date" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-phone"></i> Finder / Security Contact</label>
+            <input name="contact" placeholder="Contact Details" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-circle-info"></i> Additional Notes</label>
+          <textarea name="info" placeholder="Details about where the item is stored or deposited"></textarea>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-regular fa-image"></i> Item Photo</label>
+          <div class="file-input-wrapper">
+            <input type="file" name="photo" id="found-photo-input" accept="image/*" required>
+            <div class="file-input-text">
+              <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.2rem; color: #34d399;"></i>
+              <span>Select photo of found item</span>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary-action" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #10b981, #059669);">
+          <i class="fa-solid fa-shield-check"></i> Register Found Item
+        </button>
+      </form>
+    </div>
   </div>
-  <button id="logout-btn" class="secondary-btn">Logout</button>
-</header>
-<div class="heading">
-  <h1 class="montserrat-heading">LOST AND FOUND PORTAL</h1>
-</div>
-  <div class="content">
-    <video src="media/iLost_the_search_engine_for_lost__found.mp4" width="50%" height="auto" controls style="float: right; padding-left: 10px;"></video>
-    <p>The Lost and Found Portal is a comprehensive digital platform designed to streamline the process of reporting and locating lost or found items within our campus community. Our mission is to create a secure and efficient system that bridges the gap between those who have misplaced their belongings and those who have discovered unclaimed items.</p>
-    <h3>Our Objectives</h3>
-    <ul>
-      <li>Provide a user-friendly interface for students, staff, and faculty to report lost or found items.</li>
-      <li>Establish a centralized database to store and manage information about lost and found items.</li>
-      <li>Facilitate communication between the involved parties to expedite the return of lost items.</li>
-      <li>Promote a culture of responsibility and accountability within our campus community.</li>
-    </ul>
-    <h3>How It Works</h3>
-    <p> If you have misplaced an item, simply access the "Report Lost" section and provide details about the item, including its description, location last seen, and any additional information that may aid in its identification. Conversely, if you have come across an unclaimed item, you can submit it to the security incharge for further process</p>
-    <p>Once an item is reported, our dedicated team of security personnel will diligently work to match lost items with their rightful owners. Additionally, the portal's "History" section allows users to view previously reported items, fostering transparency and accountability throughout the process.</p>
-    <h3>Get Involved</h3>
-    <p>We encourage all members of our campus community to actively participate in the Lost and Found Portal. By working together, we can create a safer and more organized environment, ensuring that lost items find their way back to their rightful owners promptly. Join us in this collective effort to promote responsibility and safeguard the belongings of our fellow community members.</p>
+
+  <!-- Image Lightbox Modal -->
+  <div id="image-modal" class="modal">
+    <div class="modal-content" style="max-width: 700px; text-align: center; background: rgba(15, 23, 42, 0.95);">
+      <div class="modal-header">
+        <h3 id="lightbox-title"><i class="fa-regular fa-image"></i> Photo Preview</h3>
+        <span class="close" id="close-lightbox">&times;</span>
+      </div>
+      <div style="max-height: 500px; overflow: hidden; border-radius: var(--radius-md); margin-top: 10px;">
+        <img id="lightbox-img" src="" alt="Enlarged Item" style="max-width: 100%; max-height: 480px; object-fit: contain;">
+      </div>
+    </div>
   </div>
-<section id="lost-item-section">
-  <h2>Lost Items</h2>
-  <div class="lost-items" id="lost-items">
-    <!-- Lost items will be dynamically added here -->
-  </div>
-  <div class="button-container">
-    <button id="lost-btn" class="primary-btn">Report Lost</button>
-  </div>
-</section>
-<section id="found-item-section" style="display: none;">
-  <h2>Items Found by Security/Student</h2>
-  <div class="found-items" id="found-items">
-    Found items will be dynamically added here
- </div>
-  <div class="button-container" style="display: none;">
-    <button id="found-btn" class="primary-btn">Report Found</button>
-  </div>
-</section> 
-<section id="history">
-  <h2>History</h2>
-  <div class="history-items" id="history-items">
-    <!-- History items will be dynamically added here -->
-  </div>
-</section>
-<!-- Lost Item Modal -->
-<div id="lost-modal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h3>Lost Item Form</h3>
-    <form id="lost-form">
-      Lost Item:<input name="name" placeholder="Enter the Lost Item" required>
-      Last Location:<input name="location" placeholder="Location" required>
-      Date:<input name="date" type="date" >
-      Your Contact: <input name="contact" placeholder="Contact" >
-      SAP ID:<input name="sapId" placeholder="Enter your SAP ID" required pattern="\d{10,12}" title="SAP ID should be 10 to 12 digits">
-      Email ID: <input type="email" name="email" placeholder="Enter your Email Address">
-      Additional Information<textarea name="info" placeholder="Additional Information about item lost"></textarea>
-      Image:<input type="file" name="photo" id="lost-photo-input" accept="image/*">
-      <button type="submit" class="primary-btn">Submit</button>
-      <div class="loader" id="lost-item-loader" style="display: none;"></div>
-    </form>
-  </div>
-</div>
 
-<!-- Found Item Modal -->
-<div id="found-modal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h3>Found Item Form</h3>
-    <form id="found-form">
-      Name:<input name="name" placeholder="Found Item Name" required>
-      Location:<input name="location" placeholder="Found at Location" required>
-      Date:<input name="date" type="date" >
-      Contact<input name="contact" placeholder="Your Contact" required>
-      Information<textarea name="info" placeholder="Additional Information"></textarea>
-      Image<input type="file" name="photo" id="found-photo-input" accept="image/*" required>
-      <button type="submit" class="primary-btn">Submit</button>
-    </form>
-  </div>
-</div>
-
-<script>
-  
-  // Initialize Firebase
-  const firebaseConfig = {
-    databaseURL: "https://lostandfound-e3d1d-default-rtdb.firebaseio.com/",
-    apiKey: "AIzaSyDxDcnRl1NsWlKvXiDKFT_m5fgewHGv1H0",
-    authDomain: "lostandfound-e3d1d.firebaseapp.com",
-    projectId: "lostandfound-e3d1d",
-    storageBucket: "lostandfound-e3d1d.appspot.com",
-    messagingSenderId: "798654626600",
-    appId: "1:798654626600:web:fb253dafc2aa9e47096e1d",
-    measurementId: "G-H51RQ9Q3R1"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  document.getElementById('lost-btn').addEventListener('click', function() {
-    document.getElementById('lost-modal').style.display = 'block';
-  });
-
-  // document.getElementById('found-btn').addEventListener('click', function() {
-  //   document.getElementById('found-modal').style.display = 'block';
-  // });
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (!user) {
-      // If the user is not authenticated, redirect to the login page
-      window.location.href = 'index.html';
-    }
-  });
-  var closeButtons = document.getElementsByClassName('close');
-  for (var i = 0; i < closeButtons.length; i++) {
-    closeButtons[i].addEventListener('click', function() {
-      var modal = this.parentElement.parentElement;
-      modal.style.display = 'none';
-    });
-  }
-
-  window.addEventListener('click', function(event) {
-    var modal = document.getElementById('lost-modal');
-    if (event.target == modal) {
-      modal.style.display = 'none';
-    }
-
-    modal = document.getElementById('found-modal');
-    if (event.target == modal) {
-      modal.style.display = 'none';
-    }
-  });
-  document.getElementById('lost-form').addEventListener('submit', function(event) {
-  event.preventDefault();
-  
-  // Show loader
-  document.getElementById('lost-item-loader').style.display = 'block';
-  
-  // Hide submit button
-  document.querySelector('#lost-form button[type="submit"]').style.display = 'none';
-  
-  const formData = new FormData(this);
-  const name = formData.get('name');
-  const location = formData.get('location');
-  const date = formData.get('date');
-  const email = formData.get('email');
-  const contact = formData.get('contact');
-  const info = formData.get('info');
-  const sapId = formData.get('sapId');
-  const photo = formData.get('photo');
-  const userId = firebase.auth().currentUser.uid;
-
-  const reader = new FileReader();
-  reader.onload = function() {
-    const photoURL = reader.result;
-    db.ref('lost-items').push({
-      name: name,
-      location: location,
-      date: date,
-      email: email,
-      contact: contact,
-      info: info,
-      sapId: sapId,
-      photoURL: photoURL,
-      userId: userId,
-      found: false
-    }).then(() => {
-      // Hide loader
-      document.getElementById('lost-item-loader').style.display = 'none';
-      document.querySelector('#lost-form button[type="submit"]').style.display = 'block';
-      
-      Swal.fire({
-        title: "Success!",
-        text: "Lost item reported successfully!",
-        icon: "success"
-      });
-    }).catch(error => {
-      // Hide loader on error
-      document.getElementById('lost-item-loader').style.display = 'none';
-      document.querySelector('#lost-form button[type="submit"]').style.display = 'block';
-      console.error("Error uploading lost item:", error);
-    });
-  };
-  reader.readAsDataURL(photo);
-
-  document.getElementById('lost-modal').style.display = 'none';
-  this.reset();
-});
-  document.getElementById('found-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const formData = new FormData(this);
-    const name = formData.get('name');
-    const location = formData.get('location');
-    const date = formData.get('date');
-    const contact = formData.get('contact');
-    const info = formData.get('info');
-    const photo = formData.get('photo');
-    const userId = firebase.auth().currentUser.uid;
-
-    const reader = new FileReader();
-    reader.onload = function() {
-      const photoURL = reader.result;
-      db.ref('found-items').push({
-        name: name,
-        location: location,
-        date: date,
-        contact: contact,
-        info: info,
-        photoURL: photoURL,
-        userId: userId
-      });
+  <!-- Main Application Script Logic -->
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      databaseURL: "https://lostandfound-e3d1d-default-rtdb.firebaseio.com/",
+      apiKey: "AIzaSyDxDcnRl1NsWlKvXiDKFT_m5fgewHGv1H0",
+      authDomain: "lostandfound-e3d1d.firebaseapp.com",
+      projectId: "lostandfound-e3d1d",
+      storageBucket: "lostandfound-e3d1d.appspot.com",
+      messagingSenderId: "798654626600",
+      appId: "1:798654626600:web:fb253dafc2aa9e47096e1d",
+      measurementId: "G-H51RQ9Q3R1"
     };
-    reader.readAsDataURL(photo);
 
-    document.getElementById('found-modal').style.display = 'none';
-    this.reset();
-  });
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let currentFilter = 'all';
+    let allLostItems = {};
+    let allFoundItems = {};
+    let allHistoryItems = {};
 
-  function displayLostItem(item, key) {
-      const lostItemsDiv = document.getElementById('lost-items');
-      const container = document.createElement('div');
-      container.className = 'item';
-      const img = document.createElement('img');
-      img.src = item.photoURL;
-      img.alt = 'Lost Item Photo';
-      const infoParagraph = document.createElement('p');
-      let contactInfo = '';
-      if (item.email) {
-        contactInfo = `Email: ${item.email}`;
-      } else if (item.contact) {
-        contactInfo = `Contact: ${item.contact}`;
+    // Auth State Monitor
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
       }
-      infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br>${item.date}<br>${item.info}<br>${contactInfo}`;
-    const isAdmin = firebase.auth().currentUser.email === 'security@nmims.edu';
-    const currentUserId = firebase.auth().currentUser.uid;
 
-    if (isAdmin || item.userId === currentUserId) {
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.className = 'secondary-btn';
-        deleteButton.innerHTML = `<div>Delete</div>`;
-        deleteButton.dataset.itemId = key;
-        deleteButton.addEventListener('click', function() {
-          deleteLostItem(key);
-        });
+      const userName = user.displayName || user.email.split('@')[0];
+      const isAdmin = user.email === 'security@nmims.edu';
 
-        container.appendChild(img);
-        container.appendChild(infoParagraph);
-        container.appendChild(deleteButton);
-
-      
+      document.getElementById('user-name').textContent = userName;
+      document.getElementById('user-avatar-initial').textContent = userName.charAt(0).toUpperCase();
+      document.getElementById('user-role-text').textContent = isAdmin ? 'Security Admin' : 'Student';
       if (isAdmin) {
-          const foundButton = document.createElement('button');
-          foundButton.textContent = 'Handover';
-          foundButton.className = 'primary-btn';
-          foundButton.innerHTML = `<div>Handover</div>`;
-          foundButton.addEventListener('click', function() {
-            handleHandover(key, item);
-          });
-
-          const contactButton = document.createElement('button');
-          contactButton.textContent = 'Contact';
-          contactButton.className = 'primary-btn';
-          contactButton.innerHTML = `<div>Contact</div>`;
-          contactButton.addEventListener('click', function() {
-            contactUser(item.email);
-          });
-
-          container.appendChild(foundButton);
-          container.appendChild(contactButton);
-        }
-      } else {
-        container.appendChild(img);
-        container.appendChild(infoParagraph);
+        document.getElementById('user-role-text').style.color = '#38bdf8';
+        document.getElementById('found-item-section').style.display = 'block';
+        document.getElementById('nav-found-link').style.display = 'inline-flex';
+        document.getElementById('found-btn').style.display = 'inline-flex';
       }
 
-      if (item.found) {
-        container.classList.add('found');
-        container.querySelectorAll('.found-button, .delete-button').forEach(button => {
-          button.style.display = 'none';
-        });
-      }
+      // Load Realtime Data
+      listenToDatabase(isAdmin);
+    });
 
-      lostItemsDiv.appendChild(container);
+    // File input label update listener
+    document.getElementById('lost-photo-input').addEventListener('change', function(e) {
+      const fileName = e.target.files[0] ? e.target.files[0].name : 'Click or drag photo to upload';
+      document.getElementById('file-chosen-text').textContent = fileName;
+    });
+
+    // Modal Control Handlers
+    document.getElementById('lost-btn').addEventListener('click', () => openModal('lost-modal'));
+    document.getElementById('hero-report-btn').addEventListener('click', () => openModal('lost-modal'));
+    document.getElementById('found-btn').addEventListener('click', () => openModal('found-modal'));
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('show');
     }
+
+    document.querySelectorAll('.close').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.closest('.modal').classList.remove('show');
+      });
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) {
+        e.target.classList.remove('show');
+      }
+    });
+
+    // Logout Action
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = 'index.html';
+      });
+    });
+
+    // Form Submissions
+    document.getElementById('lost-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const loader = document.getElementById('lost-item-loader');
+      const submitBtn = this.querySelector('button[type="submit"]');
+
+      loader.style.display = 'inline-block';
+      submitBtn.style.display = 'none';
+
+      const formData = new FormData(this);
+      const photoFile = formData.get('photo');
+      const userId = firebase.auth().currentUser.uid;
+
+      const saveItemData = (photoURL) => {
+        db.ref('lost-items').push({
+          name: formData.get('name'),
+          location: formData.get('location'),
+          date: formData.get('date'),
+          email: formData.get('email'),
+          contact: formData.get('contact'),
+          info: formData.get('info'),
+          sapId: formData.get('sapId'),
+          photoURL: photoURL || '',
+          userId: userId,
+          found: false,
+          status: 'unclaimed',
+          createdAt: new Date().toISOString()
+        }).then(() => {
+          loader.style.display = 'none';
+          submitBtn.style.display = 'inline-flex';
+          document.getElementById('lost-modal').classList.remove('show');
+          this.reset();
+          document.getElementById('file-chosen-text').textContent = 'Click or drag photo to upload';
+          Swal.fire({
+            title: "Item Reported!",
+            text: "Your lost item has been broadcast to the portal.",
+            icon: "success",
+            background: "#1e293b",
+            color: "#fff"
+          });
+        }).catch(err => {
+          loader.style.display = 'none';
+          submitBtn.style.display = 'inline-flex';
+          Swal.fire("Error", err.message, "error");
+        });
+      };
+
+      if (photoFile && photoFile.size > 0) {
+        const reader = new FileReader();
+        reader.onload = () => saveItemData(reader.result);
+        reader.readAsDataURL(photoFile);
+      } else {
+        saveItemData('');
+      }
+    });
+
+    document.getElementById('found-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const formData = new FormData(this);
+      const photo = formData.get('photo');
+      const userId = firebase.auth().currentUser.uid;
+
+      const reader = new FileReader();
+      reader.onload = function() {
+        db.ref('found-items').push({
+          name: formData.get('name'),
+          location: formData.get('location'),
+          date: formData.get('date'),
+          contact: formData.get('contact'),
+          info: formData.get('info'),
+          photoURL: reader.result,
+          userId: userId,
+          createdAt: new Date().toISOString()
+        }).then(() => {
+          document.getElementById('found-modal').classList.remove('show');
+          document.getElementById('found-form').reset();
+          Swal.fire({
+            title: "Found Item Secured!",
+            text: "Recorded in security log successfully.",
+            icon: "success",
+            background: "#1e293b",
+            color: "#fff"
+          });
+        });
+      };
+      reader.readAsDataURL(photo);
+    });
+
+    // Realtime Database Listeners & Combined History Renderer
+    function listenToDatabase(isAdmin) {
+      // Listen to Lost Items
+      db.ref('lost-items').on('value', snapshot => {
+        allLostItems = snapshot.val() || {};
+        renderLostItems(isAdmin);
+        renderHistory();
+        updateStats();
+      });
+
+      // Listen to Found Items
+      db.ref('found-items').on('value', snapshot => {
+        allFoundItems = snapshot.val() || {};
+        renderFoundItems();
+      });
+
+      // Listen to Handover History
+      db.ref('history').on('value', snapshot => {
+        allHistoryItems = snapshot.val() || {};
+        renderHistory();
+        updateStats();
+      });
+    }
+
+    // Render Lost Items
+    function renderLostItems(isAdmin) {
+      const container = document.getElementById('lost-items');
+      container.innerHTML = '';
+      const currentUserId = firebase.auth().currentUser ? firebase.auth().currentUser.uid : '';
+      const keys = Object.keys(allLostItems);
+
+      document.getElementById('lost-count-badge').textContent = `${keys.length} Active`;
+
+      if (keys.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-box-open"></i>
+            <h3>No Active Lost Items</h3>
+            <p>All reported lost items have been recovered or none are currently listed.</p>
+          </div>
+        `;
+        return;
+      }
+
+      keys.forEach(key => {
+        const item = allLostItems[key];
+        const card = createItemCard(item, key, 'lost', isAdmin, currentUserId);
+        container.appendChild(card);
+      });
+    }
+
+    // Render Found Items
+    function renderFoundItems() {
+      const container = document.getElementById('found-items');
+      container.innerHTML = '';
+      const currentUserId = firebase.auth().currentUser ? firebase.auth().currentUser.uid : '';
+      const keys = Object.keys(allFoundItems);
+
+      if (keys.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h3>No Found Items Recorded</h3>
+            <p>No items currently held in security desk deposit.</p>
+          </div>
+        `;
+        return;
+      }
+
+      keys.forEach(key => {
+        const item = allFoundItems[key];
+        const card = createItemCard(item, key, 'found', false, currentUserId);
+        container.appendChild(card);
+      });
+    }
+
+    // Render Combined History & Claim Status Archive
+    function renderHistory() {
+      const container = document.getElementById('history-items');
+      container.innerHTML = '';
+      const filterText = document.getElementById('history-filter-input').value.toLowerCase();
+      const currentUserId = firebase.auth().currentUser ? firebase.auth().currentUser.uid : '';
+
+      // Combined array of history: Handed Over items (Claimed) + Active Lost Items (Unclaimed)
+      const combinedHistory = [];
+
+      // Add Claimed items from history node
+      Object.keys(allHistoryItems).forEach(key => {
+        combinedHistory.push({
+          ...allHistoryItems[key],
+          key: key,
+          historyStatus: 'claimed'
+        });
+      });
+
+      // Add Active/Unclaimed items from lost-items node
+      Object.keys(allLostItems).forEach(key => {
+        combinedHistory.push({
+          ...allLostItems[key],
+          key: key,
+          historyStatus: 'unclaimed'
+        });
+      });
+
+      // Sort by newest date
+      combinedHistory.sort((a, b) => new Date(b.date || b.timestamp || 0) - new Date(a.date || a.timestamp || 0));
+
+      // Filter by active tab & search keyword
+      const filtered = combinedHistory.filter(item => {
+        // Tab Filter
+        if (currentFilter === 'claimed' && item.historyStatus !== 'claimed') return false;
+        if (currentFilter === 'unclaimed' && item.historyStatus !== 'unclaimed') return false;
+
+        // Text Search
+        if (filterText) {
+          const matchName = (item.name || '').toLowerCase().includes(filterText);
+          const matchLoc = (item.location || '').toLowerCase().includes(filterText);
+          const matchSap = (item.sapId || '').toLowerCase().includes(filterText);
+          const matchInfo = (item.info || '').toLowerCase().includes(filterText);
+          return matchName || matchLoc || matchSap || matchInfo;
+        }
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <h3>No History Records Found</h3>
+            <p>No items match the selected history filter or search criteria.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const isClaimed = item.historyStatus === 'claimed';
+        const card = document.createElement('div');
+        card.className = 'item-card';
+
+        const imageContent = item.photoURL 
+          ? `<img src="${item.photoURL}" alt="${item.name}" onclick="openLightbox('${item.photoURL}', '${escapeHtml(item.name)}')">`
+          : `<div class="item-image-placeholder"><i class="fa-solid fa-image"></i><span>No Photo Provided</span></div>`;
+
+        const statusBadge = isClaimed
+          ? `<div class="card-status-badge claimed"><i class="fa-solid fa-circle-check"></i> CLAIMED & RETURNED</div>`
+          : `<div class="card-status-badge unclaimed"><i class="fa-solid fa-circle-question"></i> UNCLAIMED / ACTIVE</div>`;
+
+        const claimDetails = isClaimed
+          ? `
+            <div class="detail-row"><i class="fa-solid fa-user-check"></i> <span class="detail-text">Claimed by SAP ID: <strong>${item.sapId || 'N/A'}</strong></span></div>
+            <div class="detail-row"><i class="fa-solid fa-clock"></i> <span class="detail-text">Handover Date: <strong>${item.timestamp || 'N/A'}</strong></span></div>
+            `
+          : `
+            <div class="detail-row"><i class="fa-solid fa-id-card"></i> <span class="detail-text">Owner SAP ID: <strong>${item.sapId || 'N/A'}</strong></span></div>
+            <div class="detail-row"><i class="fa-regular fa-envelope"></i> <span class="detail-text">Contact Email: <strong>${item.email || item.contact || 'N/A'}</strong></span></div>
+            `;
+
+        card.innerHTML = `
+          <div class="item-image-wrapper">
+            ${imageContent}
+            ${statusBadge}
+          </div>
+          <div class="item-card-body">
+            <h3 class="item-card-title">${escapeHtml(item.name || 'Unnamed Item')}</h3>
+            <div class="item-details-list">
+              <div class="detail-row"><i class="fa-solid fa-location-dot"></i> <span class="detail-text">Location: <strong>${escapeHtml(item.location || 'Unknown')}</strong></span></div>
+              <div class="detail-row"><i class="fa-regular fa-calendar"></i> <span class="detail-text">Date Reported: <strong>${item.date || 'N/A'}</strong></span></div>
+              ${claimDetails}
+              ${item.info ? `<div class="detail-row"><i class="fa-solid fa-circle-info"></i> <span class="detail-text">${escapeHtml(item.info)}</span></div>` : ''}
+            </div>
+            <div class="item-card-footer">
+              ${item.photoURL ? `<button class="btn-card-action contact" onclick="openLightbox('${item.photoURL}', '${escapeHtml(item.name)}')"><i class="fa-regular fa-eye"></i> Preview Photo</button>` : '<span></span>'}
+              <span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 600;">Log ID: #${item.key.slice(-6)}</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Helper: Build Item Card for Lost / Found Grids
+    function createItemCard(item, key, type, isAdmin, currentUserId) {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+
+      const imageContent = item.photoURL 
+        ? `<img src="${item.photoURL}" alt="${item.name}" onclick="openLightbox('${item.photoURL}', '${escapeHtml(item.name)}')">`
+        : `<div class="item-image-placeholder"><i class="fa-solid fa-image"></i><span>No Photo Attached</span></div>`;
+
+      const statusBadge = `<div class="card-status-badge lost"><i class="fa-solid fa-circle-exclamation"></i> ACTIVE REPORT</div>`;
+
+      const isOwnerOrAdmin = isAdmin || (item.userId === currentUserId);
+
+      card.innerHTML = `
+        <div class="item-image-wrapper">
+          ${imageContent}
+          ${statusBadge}
+        </div>
+        <div class="item-card-body">
+          <h3 class="item-card-title">${escapeHtml(item.name)}</h3>
+          <div class="item-details-list">
+            <div class="detail-row"><i class="fa-solid fa-location-dot"></i> <span class="detail-text">Location: <strong>${escapeHtml(item.location)}</strong></span></div>
+            <div class="detail-row"><i class="fa-regular fa-calendar"></i> <span class="detail-text">Date: <strong>${item.date || 'N/A'}</strong></span></div>
+            ${item.contact ? `<div class="detail-row"><i class="fa-solid fa-phone"></i> <span class="detail-text">Contact: <strong>${escapeHtml(item.contact)}</strong></span></div>` : ''}
+            ${item.email ? `<div class="detail-row"><i class="fa-regular fa-envelope"></i> <span class="detail-text">Email: <strong>${escapeHtml(item.email)}</strong></span></div>` : ''}
+            ${item.sapId ? `<div class="detail-row"><i class="fa-solid fa-id-card"></i> <span class="detail-text">SAP ID: <strong>${escapeHtml(item.sapId)}</strong></span></div>` : ''}
+            ${item.info ? `<div class="detail-row"><i class="fa-solid fa-circle-info"></i> <span class="detail-text">${escapeHtml(item.info)}</span></div>` : ''}
+          </div>
+          <div class="item-card-footer">
+            ${isAdmin && type === 'lost' ? `<button class="btn-card-action handover" onclick="handleHandover('${key}')"><i class="fa-solid fa-hand-holding-hand"></i> Handover</button>` : ''}
+            ${isAdmin && item.email ? `<button class="btn-card-action contact" onclick="contactUser('${item.email}')"><i class="fa-solid fa-envelope"></i> Email</button>` : ''}
+            ${isOwnerOrAdmin ? `<button class="btn-card-action delete" onclick="deleteItem('${key}', '${type}')"><i class="fa-solid fa-trash-can"></i> Delete</button>` : ''}
+          </div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    // Handover & OTP Flow
     function generateOTP() {
       return Math.floor(100000 + Math.random() * 900000);
     }
-    function sendOTPToEmail(email, otp) {
+
+    function handleHandover(key) {
+      const item = allLostItems[key];
+      if (!item) return;
+
+      const otp = generateOTP();
+      
+      // Simulate/Send Email notification with OTP
+      if (item.email) {
+        Email.send({
+          Host: "smtp.elasticemail.com",
+          Username: "mohd26sohail@gmail.com",
+          Password: "37ADD05B20913C558B071CAAC1756A5EA7A8",
+          To: item.email,
+          From: 'mohd26sohail@gmail.com',
+          Subject: "NMIMS Lost Item Collection OTP",
+          Body: `Your OTP for collecting your lost item (${item.name}) at security desk is: ${otp}`,
+        }).catch(err => console.log('OTP Send log:', err));
+      }
+
+      Swal.fire({
+        title: "Verify Student Handover OTP",
+        text: `An OTP (${otp}) has been generated and sent to ${item.email || 'the student'}. Enter OTP to authorize item return:`,
+        input: 'text',
+        inputPlaceholder: 'Enter 6-digit OTP',
+        showCancelButton: true,
+        confirmButtonText: 'Verify & Return Item',
+        confirmButtonColor: '#10b981',
+        background: '#1e293b',
+        color: '#fff',
+        inputValidator: (value) => {
+          if (!value || value.trim() != otp) {
+            return 'Invalid OTP! Please check the 6-digit code provided to the student.';
+          }
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const currentUserId = firebase.auth().currentUser.uid;
+          const timestamp = new Date().toLocaleString();
+
+          // Push to history archive and delete from active lost-items
+          db.ref('history').push({
+            ...item,
+            userId: currentUserId,
+            timestamp: timestamp,
+            status: 'claimed',
+            claimedAt: timestamp
+          }).then(() => {
+            db.ref('lost-items/' + key).remove().then(() => {
+              Swal.fire({
+                icon: "success",
+                title: "Item Handed Over Successfully!",
+                text: "The item status has been updated to CLAIMED in history records.",
+                background: "#1e293b",
+                color: "#fff"
+              });
+            });
+          });
+        }
+      });
+    }
+
+    // Delete Item
+    function deleteItem(key, type) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "This item listing will be permanently removed from the portal!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#f43f5e",
+        cancelButtonColor: "#475569",
+        confirmButtonText: "Yes, delete it",
+        background: "#1e293b",
+        color: "#fff"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const targetRef = type === 'lost' ? 'lost-items/' : 'found-items/';
+          db.ref(targetRef + key).remove().then(() => {
+            Swal.fire({
+              icon: "success",
+              title: "Deleted",
+              text: "Item removed successfully.",
+              background: "#1e293b",
+              color: "#fff"
+            });
+          });
+        }
+      });
+    }
+
+    // Contact Owner Email
+    function contactUser(email) {
       Email.send({
         Host: "smtp.elasticemail.com",
         Username: "mohd26sohail@gmail.com",
         Password: "37ADD05B20913C558B071CAAC1756A5EA7A8",
         To: email,
         From: 'mohd26sohail@gmail.com',
-        Subject: "Lost Item Collection OTP",
-        Body: `Your OTP for collecting your lost item is: ${otp}`,
-      })
-      .then(function(message) {
-        console.log("OTP sent successfully");
-      })
-      .catch(function(error) {
-        console.error("Error sending OTP:", error);
-      });
-    }
-    function verifyOTP(otp, enteredOTP) {
-  return otp == enteredOTP;
-}
-function handleHandover(key, item) {
-  const otp = generateOTP();
-  sendOTPToEmail(item.email, otp);
-
-  const enteredOTP = prompt("Please enter the OTP sent to the student's email:");
-
-  if (verifyOTP(otp, enteredOTP)) {
-    const userId = firebase.auth().currentUser.uid;
-    const timestamp = new Date().toLocaleString();
-
-    // Move the item to history and delete it from the lost items section
-    db.ref('lost-items/' + key).once('value').then(snapshot => {
-      const lostItem = snapshot.val();
-      db.ref('history').push({
-        ...lostItem,
-        userId: userId,
-        timestamp: timestamp
+        Subject: 'NMIMS Lost and Found Update',
+        Body: 'Hello,\n\nWe have an update regarding your reported lost item. Please present yourself at the Security Desk with your Student ID card to claim your belonging.\n\nBest regards,\nNMIMS Security Team'
       }).then(() => {
-        db.ref('lost-items/' + key).remove().then(() => {
-Swal.fire({
-  position: "center",
-  icon: "success",
-  title: "Item Handovered",
-  showConfirmButton: false,
-  timer: 1500
-});
-        }).catch(error => {
-         
-
-
-Swal.fire({
-  position: "top-end",
-  icon: "success",
-  title: "Your work has been saved",
-  showConfirmButton: false,
-  timer: 1500
-});
+        Swal.fire({
+          icon: "success",
+          title: "Notification Email Sent!",
+          text: `Email dispatched to ${email}`,
+          background: "#1e293b",
+          color: "#fff"
         });
-      }).catch(error => {
-        Swal.fire("Error adding the item to history: " + error.message);
-      });
-    }).catch(error => {
-      Swal.fire("Error retrieving lost item data: " + error.message);
-    });
-  } else {  
-    alert("Invalid OTP. Handover canceled.");
-  }
-}
-  // function addToHistory(item) {
-  //     const userId = firebase.auth().currentUser.uid;
-  //     const timestamp = new Date().toLocaleString(); // Get the current timestamp
-  //     db.ref('history').push({
-  //       ...item,
-  //       userId: userId,
-  //       timestamp: timestamp // Add the timestamp to the item data
-  //     });
-  //   }
-    function displayHistoryItem(item) {
-  const historyItemsDiv = document.getElementById('history-items');
-  const container = document.createElement('div');
-  container.className = 'item';
-  const img = document.createElement('img');
-  img.src = item.photoURL;
-  img.alt = 'Item Photo';
-  const infoParagraph = document.createElement('p');
-  infoParagraph.innerHTML = `<strong>${item.name}</strong> Lost at ${item.location} on <br> Date: ${item.date}<br> Info: ${item.info}<br>It is handovered to <br>SAP ID: ${item.sapId}<br>Timestamp: ${item.timestamp}`;
-  container.appendChild(img);
-  container.appendChild(infoParagraph);
-  historyItemsDiv.appendChild(container);
-}
-function deleteLostItem(key) {
-  // Using SweetAlert for confirmation
-  Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!"
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // If confirmed, proceed with deletion
-      db.ref('lost-items/' + key).remove().then(() => {
-        // After deletion, show success message using SweetAlert
-        Swal.fire("Deleted!", "Your file has been deleted.", "success");
-      }).catch((error) => {
-        // If an error occurs, show error message using SweetAlert
-        Swal.fire("Error!", "There was an error deleting the file: " + error, "error");
       });
     }
-  });
-}
-  
-  function contactUser(email) {
-  
-    Email.send({
-    
-      Host: "smtp.elasticemail.com",
-    Username: "mohd26sohail@gmail.com",
-    Password: "37ADD05B20913C558B071CAAC1756A5EA7A8",
-      To: email,
-      From: 'mohd26sohail@gmail.com',
-      Subject: 'Lost Item',
-      Body: 'Hello,\n\nWe have found your lost item. Please provide security with more details to help us identify and return it to you.\n\nThank you,\nLost and Found Team'
-    }).then(function(message) {
-      Swal.fire("Email sent succesfully!");
-    })
-    .catch(function(error) {
-      console.error("Error sending email:", error);
-    });
-  }
-  function handleSearchInput() {
-    const searchText = document.getElementById('searchInput').value.toLowerCase();
-    const items = document.querySelectorAll('.item');
 
-    items.forEach(item => {
-      const itemName = item.querySelector('strong').innerText.toLowerCase();
-      if (itemName.includes(searchText)) {
-        item.style.display = 'block';
-      } else {
-        item.style.display = 'none';
-      }
+    // Update Counter Stats
+    function updateStats() {
+      const lostKeys = Object.keys(allLostItems);
+      const historyKeys = Object.keys(allHistoryItems);
+      const totalReported = lostKeys.length + historyKeys.length;
+      const claimedCount = historyKeys.length;
+      const unclaimedCount = lostKeys.length;
+
+      document.getElementById('stat-total-reported').textContent = totalReported;
+      document.getElementById('stat-items-claimed').textContent = claimedCount;
+      document.getElementById('stat-items-unclaimed').textContent = unclaimedCount;
+    }
+
+    // History Filters Click Listener
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentFilter = this.dataset.filter;
+        renderHistory();
+      });
     });
 
-    if (searchText.trim() === '') {
-      window.location.reload();
-    }
-  }
+    document.getElementById('history-filter-input').addEventListener('input', renderHistory);
 
-  document.getElementById('searchInput').addEventListener('input', function() {
-    handleSearchInput();
-  });
-
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      const userId = user.uid;
-      const userEmail = user.email;
-      const userName = user.displayName || user.email.split('@')[0];
-      document.getElementById('user-name').textContent = userName;
-
-      // Check if the user is an admin (security personnel)
-      const isAdmin = userEmail === 'security@nmims.edu';
-
-      // Add logout button event listener
-      document.getElementById('logout-btn').addEventListener('click', function() {
-        firebase.auth().signOut()
-          .then(() => {
-            console.log('User signed out successfully');
-            window.location.href = 'index.html'; // Redirect to the login page
-          })
-          .catch((error) => {
-            console.error('Error signing out:', error);
-          });
+    // Global Search Bar Handler
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      const text = e.target.value.toLowerCase();
+      document.querySelectorAll('.item-card').forEach(card => {
+        const content = card.textContent.toLowerCase();
+        if (content.includes(text)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
       });
+    });
 
-      if (isAdmin) {
-        // Show the lost item section and hide the found item section and button
-        document.getElementById('lost-item-section').style.display = 'block';
-        document.getElementById('found-item-section').style.display = 'none';
-        document.getElementById('found-btn').style.display = 'none';
-
-        db.ref('lost-items').on('value', function(snapshot) {
-          document.getElementById('lost-items').innerHTML = '';
-          snapshot.forEach(function(child) {
-            var item = child.val();
-            var key = child.key;
-            displayLostItem(item, key);
-          });
-        });
-
-        db.ref('history').on('value', function(snapshot) {
-          document.getElementById('history-items').innerHTML = '';
-          snapshot.forEach(function(child) {
-            var item = child.val();
-            displayHistoryItem(item);
-          });
-        });
-      } else {
-        // Show the lost item section and the found item section for students
-        document.getElementById('lost-item-section').style.display = 'block';
-        document.getElementById('found-item-section').style.display = 'none';
-
-        db.ref('lost-items').on('value', function(snapshot) {
-          document.getElementById('lost-items').innerHTML = '';
-          snapshot.forEach(function(child) {
-            var item = child.val();
-            var key = child.key;
-            displayLostItem(item, key);
-          });
-        });
-
-        db.ref('found-items').on('value', function(snapshot) {
-          document.getElementById('found-items').innerHTML = '';
-          snapshot.forEach(function(child) {
-            var item = child.val();
-            var key = child.key;
-            displayFoundItem(item, key);
-          });
-        });
-
-        db.ref('history').on('value', function(snapshot) {
-          document.getElementById('history-items').innerHTML = '';
-          snapshot.forEach(function(child) {
-            var item = child.val();
-            displayHistoryItem(item);
-          });
-        });
-      }
-    } else {
-      document.getElementById('lost-items').innerHTML = '';
-      document.getElementById('found-items').innerHTML = '';
-      document.getElementById('history-items').innerHTML ='';
-      document.getElementById('user-name').textContent = '';
-    }
-  });
-
-  function displayFoundItem(item, key) {
-    const foundItemsDiv = document.getElementById('found-items');
-    const container = document.createElement('div');
-    container.className = 'item';
-    const img = document.createElement('img');
-    img.src = item.photoURL;
-    img.alt = 'Found Item Photo';
-    const infoParagraph = document.createElement('p');
-    infoParagraph.innerHTML = `${item.name} found at ${item.location} on ${item.date}<br>${item.info}<br>Contact: ${item.contact}`;
-    const currentUserId = firebase.auth().currentUser.uid;
-
-    if (item.userId === currentUserId) {
-      const deleteButton = document.createElement('button');
-      deleteButton.textContent = 'Delete';
-      deleteButton.className = 'secondary-btn';
-      deleteButton.innerHTML = `<div>
-        Delete
-      </div>`;
-      deleteButton.dataset.itemId = key;
-      deleteButton.addEventListener('click', function() {
-        deleteFoundItem(key);
-      });
-
-      container.appendChild(img);
-      container.appendChild(infoParagraph);
-      container.appendChild(deleteButton);
-    } else {
-      container.appendChild(img);
-      container.appendChild(infoParagraph);
+    // Lightbox Modal
+    function openLightbox(url, title) {
+      document.getElementById('lightbox-img').src = url;
+      document.getElementById('lightbox-title').innerHTML = `<i class="fa-regular fa-image"></i> ${title}`;
+      openModal('image-modal');
     }
 
-    foundItemsDiv.appendChild(container);
-  }
-
-  function deleteFoundItem(key) {
-    if (confirm("Are you sure you want to delete this found item?")) {
-      db.ref('found-items/' + key).remove();
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
-  }
-  
-</script>
+  </script>
 </body>
 </html>
- 
