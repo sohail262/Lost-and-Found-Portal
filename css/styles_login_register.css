@@ -226,7 +226,7 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
   transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(99, 102, 241, 0.45);
+  box-shadow: 0 12px 25px rgba(99, 102, 240, 0.45);
 }
 
 button[type="submit"]:active {
