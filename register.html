@@ -3,35 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register</title>
+  <title>Register - NMIMS Lost & Found Portal</title>
+  <meta name="description" content="Register an account for NMIMS Lost and Found System">
   <link rel="stylesheet" href="css/styles_login_register.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm2KWU2lnWVZxxAaRmXMya2wwwvjk94gMU6EfeCLMZXl2+IoK9XUcHXHw5I/cHPM+aSQ3wfmca4qvR8swUg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-
 <body>
   <div id="heading">
-    
-    <h1 class="montserrat-heading">LOST AND FOUND PORTAL</h1>
+    <div class="brand-badge">
+      <i class="fa-solid fa-graduation-cap"></i> NMIMS HYDERABAD
     </div>
+    <h1 class="montserrat-heading">LOST & FOUND PORTAL</h1>
+  </div>
+  
   <div class="container">
     <div class="form-container">
-      <h1>Register</h1>
+      <h1>Create Account</h1>
+      <p class="form-subtitle">Register to submit lost/found items and track claims</p>
       <form id="register-form">
         <div class="input-group">
-          <i class="fas fa-user"></i>
-          <input type="email" id="email" name="email" placeholder="Email" required>
+          <input type="email" id="email" name="email" placeholder="Campus Email Address" required>
+          <i class="fa-regular fa-envelope"></i>
         </div>
         <div class="input-group">
-          <i class="fas fa-lock"></i>
-          <input type="password" id="password" name="password" placeholder="Password" required>
+          <input type="password" id="password" name="password" placeholder="Create Password" required>
+          <i class="fa-solid fa-lock"></i>
         </div>
-        <button type="submit">Register</button>
+        <button type="submit">
+          <span>Register Now</span>
+          <i class="fa-solid fa-user-plus"></i>
+        </button>
       </form>
-      <p>Already have an account? <a href="index.html">Login here</a></p>
+      <p>Already have an account? <a href="index.html">Log in here</a></p>
       <div class="loader" id="register-loader" style="display: none;"></div>
     </div>
   </div>
+
   <div class="toast-container"></div>
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-auth.js"></script>
